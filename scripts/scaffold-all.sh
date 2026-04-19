@@ -108,6 +108,11 @@ PACKAGE_OVERRIDES[cos-signal-bridge]=signal_bridge                      # pyproj
 PACKAGE_OVERRIDES[EDGAR-Forge]=edgar                                    # pyproject name=edgar-forge, packages=["edgar"]
 PACKAGE_OVERRIDES[FRED-Forge]=src                                        # pyproject name=fred-forge, packages=["src", ...] — literal "src" is the module
 PACKAGE_OVERRIDES[ingest]=ingest_shared                                 # pyproject name=ingest, packages=["src/connectors","src/ingest_shared"] — picking ingest_shared
+# Discovered during plan 02-02 dirty-tree triage (previously SKIP'd on preflight):
+PACKAGE_OVERRIDES[bis-forge]=bis                                        # pyproject name=bis-forge, packages=["src/bis"]
+PACKAGE_OVERRIDES[bls-forge]=bls                                        # pyproject name=bls-forge, packages=["src/bls"]
+PACKAGE_OVERRIDES[imf-forge]=imf                                        # pyproject name=imf-forge, packages=["src/imf"]
+PACKAGE_OVERRIDES[BTC-Forge]=src                                         # pyproject name=btc-ohlcv-forge, packages=["src", "src.core", "src.exchanges"] — literal "src" (loose-files layout)
 # Implementer: at subsequent wrapper runs, monitor mkdocs-build logs for additional
 # `Could not collect '<module>'` warnings; add the true module name here
 # and re-run scaffold.sh /path/to/repo --package <name> for the affected repo.
