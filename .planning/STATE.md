@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-04-19T07:34:00.000Z"
+last_updated: "2026-04-18T00:00:00.000Z"
 progress:
   total_phases: 4
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 2
-  completed_plans: 1
-  percent: 12
+  completed_plans: 2
+  percent: 25
 ---
 
 # State: cos-docs
@@ -24,21 +24,21 @@ progress:
 
 ## Current Position
 
-Phase: 1 (Scaffold & Template) — EXECUTING
-Plan: 2 of 2 (next)
+Phase: 1 (Scaffold & Template) — COMPLETE
+Plan: 2 of 2 — complete
 
-- **Phase:** 1 — Scaffold & Template (In progress)
-- **Plan:** 01-01 complete (32a5cf5); 01-02 next
-- **Status:** Executing Phase 1
-- **Progress:** [■□□□] 0/4 phases complete (1/2 plans of phase 1)
+- **Phase:** 1 — Scaffold & Template (Complete)
+- **Plan:** 01-01 (32a5cf5); 01-02 (350edac, 287564a, ded6955) complete
+- **Status:** Phase 1 complete; ready for Phase 2 (Content Migration)
+- **Progress:** [■□□□] 1/4 phases complete (2/2 plans of phase 1)
 
 ## Performance Metrics
 
 | Metric | Value |
 |--------|-------|
 | Phases planned | 4 |
-| Phases complete | 0 |
-| Plans complete | 1 |
+| Phases complete | 1 |
+| Plans complete | 2 |
 | v1 requirements mapped | 26/26 |
 | Spikes completed | 4 (all ✓ VALIDATED) |
 
@@ -57,6 +57,13 @@ Plan: 2 of 2 (next)
 - Pin MkDocs Material + plugin versions explicitly (Material 2.0 will break plugins)
 - Scaffold all ~25 repos in v1, not a pilot subset
 - Per-repo `docs/` trees stay self-contained (no build-time deps imposed on sibling repos)
+
+### Decisions From Plan 01-02
+
+- D-16 pin versions resolved at scaffold-time from PyPI (mkdocs-material 9.7.6 — NOT 1.6.1 from CONTEXT.md, which conflated mkdocs-material with mkdocs core)
+- mkdocstrings handler MUST include `extensions: [griffe_pydantic]` AND `show_submodules: true` to render Pydantic v2 field-level docstrings (neither auto-loads in mkdocstrings 1.0.x); both auto-added during E2E smoke after grep for field docstring substring failed initially
+- emit_mkdocs_yml takes `(site_name, repo_type)` so the `- API: api.md` nav line is conditional via a shell `echo` between two heredocs (D-11)
+- Distinct heredoc terminators (REQS_EOF, INDEX_EOF, ARCHITECTURE_EOF, API_EOF, MKDOCS_EOF, MKDOCS_PLUGINS_EOF) used per emit function to avoid past EOF/EOF collision risk
 
 ### Decisions From Plan 01-01
 
@@ -79,8 +86,8 @@ Plan: 2 of 2 (next)
 
 ## Session Continuity
 
-**Last session:** 2026-04-19 — Plan 01-01 executed: scaffold.sh skeleton with arg parsing, repo-type detection, hyphen→underscore-normalized python package extraction (D-13), two-tier file ownership, atomic writes, and empty-diff suppression. All 7 smoke sub-cases passed.
-**Next action:** Execute Plan 01-02 (heredoc template bodies + E2E `mkdocs build --strict` smoke against COS-Core)
+**Last session:** 2026-04-18 — Plan 01-02 executed: emit_* heredoc bodies populated (Mermaid superfences, mkdocstrings ::: block, pinned requirements with PyPI-resolved D-16 versions); E2E smoke against COS-Core verified Mermaid rendering AND Pydantic v2 field docstring rendering in built site (`Lowercase exchange name` from OHLCVBar.exchange found 4× in api/index.html). Auto-fixed missing griffe_pydantic extension + show_submodules in mkdocstrings handler config.
+**Next action:** Phase 1 complete. Begin Phase 2 (Content Migration) — scaffold all ~25 sibling repos, migrate README/CLAUDE.md content into docs/ trees.
 **Files in play:**
 
 - `.planning/PROJECT.md`
