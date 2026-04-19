@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-04-19T19:23:48.000Z"
+last_updated: "2026-04-19T19:45:24.000Z"
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 5
-  completed_plans: 3
-  percent: 35
+  completed_plans: 4
+  percent: 45
 ---
 
 # State: cos-docs
@@ -25,12 +25,12 @@ progress:
 ## Current Position
 
 Phase: 2 (Content Migration) — IN PROGRESS
-Plan: 1 of 3 — complete
+Plan: 2 of 3 — complete
 
-- **Phase:** 2 — Content Migration (Wave 1 of 3 complete)
-- **Plan:** 02-01 (63b2246, 78c5101) complete; ready for 02-02 (rollout sweep)
-- **Status:** Rollout tooling shipped; ready for plan 02-02 (full sweep + triage)
-- **Progress:** [■■□□] 1/4 phases complete + 1/3 plans of phase 2
+- **Phase:** 2 — Content Migration (Wave 2 of 3 complete)
+- **Plan:** 02-02 (d8cffe6 in cos-docs + 83683eb in parent + 9 sibling-repo scaffold commits) complete; ready for 02-03 (per-repo content authoring)
+- **Status:** Rollout sweep executed. 9 OK / 2 FAIL / 19 SKIP (with remediation). Tooling correct; gap is workspace hygiene. Ready for plan 02-03.
+- **Progress:** [■■■□] 1/4 phases complete + 2/3 plans of phase 2
 
 ## Performance Metrics
 
@@ -38,13 +38,14 @@ Plan: 1 of 3 — complete
 |--------|-------|
 | Phases planned | 4 |
 | Phases complete | 1 |
-| Plans complete | 3 |
+| Plans complete | 4 |
 | v1 requirements mapped | 26/26 |
 | Spikes completed | 4 (all ✓ VALIDATED) |
 
 | Plan | Duration (s) | Tasks | Files | Commits |
 |------|--------------|-------|-------|---------|
 | 02-01 | 276 | 2 | 2 | 2 (63b2246, 78c5101) |
+| 02-02 | 440 | 2 | 3 (cos-docs) + 1 (parent) + 9 (siblings) | 11 (d8cffe6, 83683eb, 4557877, c1b7072, 2835ccf, d6c8a03, a3d8591, 3b66154, 8a28715, 1a8d963, 7e6e2fc) |
 
 ## Accumulated Context
 
@@ -61,6 +62,14 @@ Plan: 1 of 3 — complete
 - Pin MkDocs Material + plugin versions explicitly (Material 2.0 will break plugins)
 - Scaffold all ~25 repos in v1, not a pilot subset
 - Per-repo `docs/` trees stay self-contained (no build-time deps imposed on sibling repos)
+
+### Decisions From Plan 02-02
+
+- Discovered 7 empirical PACKAGE_OVERRIDES beyond the 1 seeded (backend, cos_cie, mse, signal_bridge, edgar, src, ingest_shared) — all backported into scaffold-all.sh
+- Discovered workspace-dep install failure mode: `pip install -e .` fails when local sibling packages (xuer-sgl, cos-sdl) are not on PyPI. Manual fix: `pip install --no-deps -e .` for COS-CIE and cos-signal-bridge. Wrapper automation deferred to future plan.
+- scaffold.sh:emit_index_md template bug identified: unconditionally writes `- [API](api.md)` link even on docs-only repos, producing broken strict-build ref on COS-Infra and COS-Network. Fix deferred to Phase 3 (Phase 1 territory).
+- `scaffold.sh`'s `write_user_owned` semantics confirmed: re-running with `--package <new>` does NOT overwrite existing `docs/api.md` (it's user-owned); manual delete required before re-scaffold or use `--force`. Not a bug — intentional per D-05 — but operationally important for PACKAGE_OVERRIDES backport workflow.
+- Dirty-tree / non-main-branch repos (17 total) intentionally left for user triage per D-15/D-16 and plan's autonomous=false directive. Remediation per-repo documented in 02-ROLLOUT-STATUS.md.
 
 ### Decisions From Plan 02-01
 
@@ -98,8 +107,8 @@ Plan: 1 of 3 — complete
 
 ## Session Continuity
 
-**Last session:** 2026-04-19 — Executed plan 02-01 (rollout tooling). Two commits: 63b2246 (scaffold.sh `--package <name>` flag, D-17) and 78c5101 (scaffold-all.sh wrapper, D-01..D-17). ROLLOUT_LIST = 30 entries (D-14 audit, FATAL guard); EXCLUDE_LIST = 2 (cos-docs, capability-gated-agent-architecture); DIAGRAM_EXEMPT = 3 (Hardware, Network, CGAA); PACKAGE_OVERRIDES = 1 seeded (COS-LangGraph→langgraph_agent). All plan-spec verify greps pass; anti-regression confirmed (Phase 1 COS-Core fallback path produces `::: cos_core` unchanged). Optional dry-run skipped — full sweep is the deliverable of plan 02-02.
-**Next action:** Execute Phase 2 wave 2 — plan 02-02 (rollout sweep, failure triage, REQUIREMENTS.md DIAG-02 amendment, workspace CLAUDE.md project-map update). `autonomous: false` — needs human judgment for failure triage.
+**Last session:** 2026-04-19 — Executed plan 02-02 (rollout sweep). Commits: d8cffe6 (cos-docs: scaffold-all.sh PACKAGE_OVERRIDES backport + REQUIREMENTS.md DIAG-02 amendment + 02-ROLLOUT-STATUS.md), 83683eb (parent /home/btc/github: CLAUDE.md project map reconciliation), plus 9 sibling-repo `docs: add cos-docs scaffold (content to follow)` commits. Final counts: 9 OK (3 initial + 6 via PACKAGE_OVERRIDES), 2 FAIL (COS-Infra/COS-Network scaffold template bug), 19 SKIP (2 excluded + 4 non-main branches + 13 dirty trees). 7 empirical PACKAGE_OVERRIDES backported. Workspace-dep install fallback (`pip install --no-deps -e .`) applied manually to COS-CIE and cos-signal-bridge. Plan target ≥25 OK not met (9 OK) — gap is workspace hygiene awaiting user triage; tooling itself is correct. All 30 repos have rows in 02-ROLLOUT-STATUS.md per CONT-01.
+**Next action:** Per-repo triage (user): clean 13 dirty trees, checkout main on 4 kubernetes branches, then re-run `scaffold.sh /path/to/repo` per-repo. Separately, execute Phase 2 wave 3 — plan 02-03 (per-repo content authoring). Consider scoping a scaffold.sh template-bug fix (emit_index_md repo_type awareness) and a `NO_DEPS_INSTALL` wrapper enhancement as follow-up work.
 **Files in play:**
 
 - `.planning/PROJECT.md`

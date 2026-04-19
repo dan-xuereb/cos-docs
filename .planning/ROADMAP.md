@@ -41,7 +41,7 @@ Plans:
 **Plans:** 3 plans
 Plans:
 - [x] 02-01-PLAN.md — scaffold-all.sh wrapper + scaffold.sh --package amendment + PACKAGE_OVERRIDES (D-01, D-14, D-17) ✓ 2026-04-19 (63b2246, 78c5101)
-- [ ] 02-02-PLAN.md — Run rollout, triage failures, amend REQUIREMENTS.md DIAG-02, update CLAUDE.md project map (CONT-01, DIAG-02)
+- [x] 02-02-PLAN.md — Run rollout, triage failures, amend REQUIREMENTS.md DIAG-02, update CLAUDE.md project map (CONT-01, DIAG-02) ✓ 2026-04-19 (d8cffe6 cos-docs, 83683eb parent, 9 sibling commits; 9 OK / 2 FAIL / 19 SKIP)
 - [ ] 02-03-PLAN.md — Hand-author per-repo content across 5 domain groups (CONT-02, CONT-03, CONT-04, D-05)
 
 ### Phase 3: Aggregator & API Strategy
@@ -72,7 +72,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Scaffold & Template | 2/2 | Complete | 2026-04-18 |
-| 2. Content Migration | 1/3 | In progress | - |
+| 2. Content Migration | 2/3 | In progress | - |
 | 3. Aggregator & API Strategy | 0/0 | Not started | - |
 | 4. Deploy & CI | 0/0 | Not started | - |
 
