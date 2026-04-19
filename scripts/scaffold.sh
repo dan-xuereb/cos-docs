@@ -2,9 +2,14 @@
 set -euo pipefail
 
 # scaffold.sh — Drop a working per-repo MkDocs Material setup into a target sibling repo.
-# Usage: scaffold.sh [--force] <path-to-target-repo>
-#   --force   Also overwrite user-owned docs/*.md files (default: leave existing docs/*.md untouched)
+# Usage: scaffold.sh [--force] [--package <name>] <path-to-target-repo>
+#   --force            Also overwrite user-owned docs/*.md files (default: leave existing docs/*.md untouched)
+#   --package <name>   Override the importable Python module name used in docs/api.md
+#                      (default: derived from [project].name in pyproject.toml,
+#                      or directory basename, with hyphens normalized to underscores).
+#                      Use when distribution name != module name (e.g. COS-LangGraph → langgraph_agent).
 # Implements decisions D-01..D-17 from .planning/phases/01-scaffold-template/01-CONTEXT.md
+# plus D-17 from .planning/phases/02-content-migration/02-CONTEXT.md (--package override flag).
 #
 # File ownership (D-05):
 #   - docs/*.md           user-owned    (touched only when absent, unless --force)
@@ -23,8 +28,12 @@ set -euo pipefail
 
 usage() {
     cat >&2 <<'USAGE'
-Usage: scaffold.sh [--force] <path-to-target-repo>
-  --force   Also overwrite user-owned docs/*.md files
+Usage: scaffold.sh [--force] [--package <name>] <path-to-target-repo>
+  --force            Also overwrite user-owned docs/*.md files
+  --package <name>   Override the importable Python module name used in docs/api.md
+                     (default: derived from [project].name in pyproject.toml,
+                     or directory basename, with hyphens normalized to underscores).
+                     Use when distribution name != module name (e.g. COS-LangGraph → langgraph_agent).
 
 Drops MkDocs Material scaffold (docs/, mkdocs.yml, requirements-docs.txt)
 into the target repo. Auto-detects repo type from pyproject.toml/package.json.
@@ -37,12 +46,22 @@ USAGE
 
 FORCE=0
 TARGET_REPO=""
+PACKAGE_OVERRIDE=""
 
 while [ $# -gt 0 ]; do
     case "$1" in
         --force)
             FORCE=1
             shift
+            ;;
+        --package)
+            if [ $# -lt 2 ]; then
+                echo "Error: --package requires a value" >&2
+                usage
+                exit 2
+            fi
+            PACKAGE_OVERRIDE="$2"
+            shift 2
             ;;
         -h|--help)
             usage
@@ -281,6 +300,13 @@ main() {
 
     echo "[scaffold] target=${TARGET_REPO} type=${repo_type} force=${FORCE}" >&2
 
+    # Defensive: warn (do not fail) when --package is set on a non-Python repo.
+    # The Phase 2 wrapper passes --package unconditionally based on its overrides
+    # map, so this must remain ignorable rather than an error.
+    if [ -n "$PACKAGE_OVERRIDE" ] && [ "$repo_type" != "python" ]; then
+        echo "[warn] --package ignored for non-python repo (type=${repo_type})" >&2
+    fi
+
     mkdir -p "${TARGET_REPO}/docs"
 
     # User-owned docs (D-05)
@@ -290,7 +316,11 @@ main() {
     # Python-only api.md (D-11)
     if [ "$repo_type" = "python" ]; then
         local pkg
-        pkg=$(detect_python_package)
+        if [ -n "$PACKAGE_OVERRIDE" ]; then
+            pkg="$PACKAGE_OVERRIDE"
+        else
+            pkg=$(detect_python_package)
+        fi
         write_user_owned "docs/api.md" emit_api_md "$pkg"
     fi
 
