@@ -7,7 +7,7 @@ last_updated: "2026-04-19T00:00:00.000Z"
 progress:
   total_phases: 4
   completed_phases: 1
-  total_plans: 2
+  total_plans: 5
   completed_plans: 2
   percent: 25
 ---
@@ -86,8 +86,8 @@ Plan: 2 of 2 — complete
 
 ## Session Continuity
 
-**Last session:** 2026-04-19 — Phase 2 context gathered (`/gsd-discuss-phase 2`). Decisions D-01..D-13 captured in `.planning/phases/02-content-migration/02-CONTEXT.md`: thin wrapper `scaffold-all.sh` over Phase 1 D-04 single-repo scaffold; one commit per sibling repo on main; continue-on-failure with summary; per-repo `mkdocs build --strict` smoke gate; **hand-author** content per repo (LLM-assist rejected); api.md = auto `:::` block + curated submodule list; **diagrams skipped** for trivial/docs-only repos (D-08 — explicit DIAG-02 deviation, requirements amendment flagged); CLAUDE.md project map is the authoritative repo list; lowercase `capability-gated-agent-architecture` excluded as duplicate.
-**Next action:** Phase 2 ready for planning — `/gsd-plan-phase 2`.
+**Last session:** 2026-04-19 — Phase 2 planned (`/gsd-plan-phase 2`). Research surfaced 4 critical gaps prompting CONTEXT.md amendment D-14..D-17 (30-repo scope vs stale 25-repo CLAUDE.md map; main+master accepted, dirty trees skipped, PACKAGE_OVERRIDES map for COS-LangGraph et al.). Planner produced 3 plans in 3 waves (02-01 wrapper script + scaffold.sh `--package` amendment; 02-02 rollout sweep + REQUIREMENTS.md DIAG-02 amendment + workspace CLAUDE.md project-map update; 02-03 hand-authoring across 5 domain-group checkpoints). Plan checker: 1 BLOCKER + 4 WARNINGS on iteration 1 (ROLLOUT_LIST count contradiction, weak content-acceptance, missing success-criterion-#5 trace); revised; iteration 2 PASSED. All 5 phase REQ-IDs covered (CONT-01..04, DIAG-02). Plans 02-02 and 02-03 marked `autonomous: false` (failure triage + hand-authoring need human judgment).
+**Next action:** Execute Phase 2 — `/gsd-execute-phase 2` (start with wave 1 = 02-01 wrapper script).
 **Files in play:**
 
 - `.planning/PROJECT.md`
