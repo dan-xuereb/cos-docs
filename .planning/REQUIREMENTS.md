@@ -30,7 +30,7 @@
 ### Diagrams
 
 - [ ] **DIAG-01**: Mermaid fenced code blocks render in both per-repo and aggregator builds via `pymdownx.superfences` and Material's bundled `mermaid.min.js` (no extra plugin)
-- [ ] **DIAG-02**: At least one Mermaid architecture diagram exists per repo (in `docs/architecture.md`)
+- [ ] **DIAG-02**: At least one Mermaid architecture diagram exists per non-exempt repo (in `docs/architecture.md`). Exempt repos (no software architecture to diagram): `COS-Hardware`, `COS-Network`, `COS-Capability-Gated-Agent-Architecture`. Exempt list maintained in `cos-docs/scripts/scaffold-all.sh` (DIAGRAM_EXEMPT array); additions during Phase 2 authoring update both that array and this requirement footnote.
 - [ ] **DIAG-03**: A top-level workspace data-flow Mermaid diagram exists in the aggregator
 
 ### API Docs

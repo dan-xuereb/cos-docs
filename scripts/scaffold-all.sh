@@ -100,7 +100,15 @@ DIAGRAM_EXEMPT=( COS-Hardware COS-Network COS-Capability-Gated-Agent-Architectur
 # ---------------------------------------------------------------------------
 declare -A PACKAGE_OVERRIDES=()
 PACKAGE_OVERRIDES[COS-LangGraph]=langgraph_agent
-# Implementer: at first wrapper run, monitor mkdocs-build logs for additional
+# Discovered empirically during plan 02-02 first sweep (see 02-ROLLOUT-STATUS.md):
+PACKAGE_OVERRIDES[COS-Bitcoin-Protocol-Intelligence-Platform]=backend  # pyproject name=bpip, packages=["backend"]
+PACKAGE_OVERRIDES[COS-CIE]=cos_cie                                     # pyproject name=cos-cie (hyphen), module=cos_cie
+PACKAGE_OVERRIDES[COS-MSE]=mse                                          # pyproject name=market-sentiment-engine, packages=["src/mse"]
+PACKAGE_OVERRIDES[cos-signal-bridge]=signal_bridge                      # pyproject name=cos-signal-bridge, packages=["src/signal_bridge"]
+PACKAGE_OVERRIDES[EDGAR-Forge]=edgar                                    # pyproject name=edgar-forge, packages=["edgar"]
+PACKAGE_OVERRIDES[FRED-Forge]=src                                        # pyproject name=fred-forge, packages=["src", ...] — literal "src" is the module
+PACKAGE_OVERRIDES[ingest]=ingest_shared                                 # pyproject name=ingest, packages=["src/connectors","src/ingest_shared"] — picking ingest_shared
+# Implementer: at subsequent wrapper runs, monitor mkdocs-build logs for additional
 # `Could not collect '<module>'` warnings; add the true module name here
 # and re-run scaffold.sh /path/to/repo --package <name> for the affected repo.
 
