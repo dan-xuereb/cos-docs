@@ -194,6 +194,9 @@ plugins:
           options:
             show_root_heading: true
             members_order: alphabetical
+            extensions:
+              - griffe_pydantic
+            show_submodules: true
 
 markdown_extensions:
   - admonition
