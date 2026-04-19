@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-04-19T07:22:07.954Z"
+last_updated: "2026-04-19T07:34:00.000Z"
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 2
-  completed_plans: 0
-  percent: 0
+  completed_plans: 1
+  percent: 12
 ---
 
 # State: cos-docs
@@ -25,12 +25,12 @@ progress:
 ## Current Position
 
 Phase: 1 (Scaffold & Template) — EXECUTING
-Plan: 1 of 2
+Plan: 2 of 2 (next)
 
-- **Phase:** 1 — Scaffold & Template (Not started)
-- **Plan:** None (awaiting `/gsd-plan-phase 1`)
+- **Phase:** 1 — Scaffold & Template (In progress)
+- **Plan:** 01-01 complete (32a5cf5); 01-02 next
 - **Status:** Executing Phase 1
-- **Progress:** [□□□□] 0/4 phases complete
+- **Progress:** [■□□□] 0/4 phases complete (1/2 plans of phase 1)
 
 ## Performance Metrics
 
@@ -38,7 +38,7 @@ Plan: 1 of 2
 |--------|-------|
 | Phases planned | 4 |
 | Phases complete | 0 |
-| Plans complete | 0 |
+| Plans complete | 1 |
 | v1 requirements mapped | 26/26 |
 | Spikes completed | 4 (all ✓ VALIDATED) |
 
@@ -58,6 +58,13 @@ Plan: 1 of 2
 - Scaffold all ~25 repos in v1, not a pilot subset
 - Per-repo `docs/` trees stay self-contained (no build-time deps imposed on sibling repos)
 
+### Decisions From Plan 01-01
+
+- scaffold.sh uses `sed -nE` (POSIX) for TOML `[project].name` extraction rather than GNU awk — keeps zero-dep promise on any workstation
+- D-13 hyphen→underscore normalization is a single bash parameter expansion (`${raw_name//-/_}`) at scaffold.sh:107, applied uniformly to BOTH the pyproject path AND the basename-fallback path
+- Empty-diff suppression implemented by capturing `diff -u` output to a variable and gating printf on `[ -n "$diff_out" ]` — single branch, no separate `cmp` pre-check
+- Atomic write pattern (`${path}.tmp.$$` → `mv`) reuses workspace's Python `tmp → rename` convention in bash
+
 ### Open Decisions
 
 - **API-02**: API-docs strategy (mega-venv vs pre-rendered per-repo CI) — must be decided in Phase 3 before Phase 4 (Deploy)
@@ -72,8 +79,8 @@ Plan: 1 of 2
 
 ## Session Continuity
 
-**Last session:** 2026-04-18 — project initialization, requirements definition, roadmap creation
-**Next action:** Run `/gsd-plan-phase 1` to decompose Phase 1 into executable plans
+**Last session:** 2026-04-19 — Plan 01-01 executed: scaffold.sh skeleton with arg parsing, repo-type detection, hyphen→underscore-normalized python package extraction (D-13), two-tier file ownership, atomic writes, and empty-diff suppression. All 7 smoke sub-cases passed.
+**Next action:** Execute Plan 01-02 (heredoc template bodies + E2E `mkdocs build --strict` smoke against COS-Core)
 **Files in play:**
 
 - `.planning/PROJECT.md`

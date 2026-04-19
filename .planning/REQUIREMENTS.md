@@ -10,7 +10,7 @@
 - [ ] **SCAF-01**: A `scaffold.sh` script drops `docs/index.md`, `docs/architecture.md`, `docs/api.md`, and `mkdocs.yml` into a target sibling repo
 - [ ] **SCAF-02**: The per-repo `mkdocs.yml` template includes correct `!include`-compatible config (site_name, nav, plugins) so the repo can be previewed locally with `mkdocs serve`
 - [ ] **SCAF-03**: The scaffold pins MkDocs Material and plugin versions explicitly in a per-repo requirements file
-- [ ] **SCAF-04**: Re-running `scaffold.sh` on an already-scaffolded repo is safe (no clobbering existing edited content)
+- [x] **SCAF-04**: Re-running `scaffold.sh` on an already-scaffolded repo is safe (no clobbering existing edited content) — completed in Plan 01-01 (32a5cf5); idempotency, --force override, and empty-diff suppression all smoke-verified
 
 ### Content
 

@@ -25,7 +25,7 @@
   4. A Pydantic v2 model with trailing-string field docstrings renders its field docs natively on `docs/api.md`
   5. Re-running `scaffold.sh` on an already-scaffolded repo does not clobber edited `docs/*.md` content
 Plans:
-- [ ] 01-01-PLAN.md — scaffold.sh skeleton: arg parsing, repo-type detection, ownership/idempotency, --force, diff-on-overwrite (D-01,D-03,D-05..D-11,D-13)
+- [x] 01-01-PLAN.md — scaffold.sh skeleton: arg parsing, repo-type detection, ownership/idempotency, --force, diff-on-overwrite (D-01,D-03,D-05..D-11,D-13) ✓ 2026-04-19 (32a5cf5)
 - [ ] 01-02-PLAN.md — embedded heredoc templates (mkdocs.yml + Mermaid superfences, pinned requirements-docs.txt, mkdocstrings api.md) + E2E smoke vs COS-Core (D-12,D-14..D-17, DIAG-01, API-01)
 
 ### Phase 2: Content Migration
@@ -67,7 +67,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Scaffold & Template | 0/0 | Not started | - |
+| 1. Scaffold & Template | 1/2 | In progress | - |
 | 2. Content Migration | 0/0 | Not started | - |
 | 3. Aggregator & API Strategy | 0/0 | Not started | - |
 | 4. Deploy & CI | 0/0 | Not started | - |
