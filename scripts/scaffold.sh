@@ -132,7 +132,12 @@ emit_mkdocs_yml() {
 }
 
 emit_requirements_docs_txt() {
-    echo "TODO: Plan 02 will provide requirements-docs.txt with pinned versions"
+    cat <<'REQS_EOF'
+mkdocs-material==9.7.6
+mkdocs-monorepo-plugin==1.1.2
+mkdocstrings[python]==1.0.4
+griffe-pydantic==1.3.1
+REQS_EOF
 }
 
 # ---------------------------------------------------------------------------
