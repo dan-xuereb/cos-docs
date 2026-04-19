@@ -1,0 +1,221 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# scaffold.sh — Drop a working per-repo MkDocs Material setup into a target sibling repo.
+# Usage: scaffold.sh [--force] <path-to-target-repo>
+#   --force   Also overwrite user-owned docs/*.md files (default: leave existing docs/*.md untouched)
+# Implements decisions D-01..D-17 from .planning/phases/01-scaffold-template/01-CONTEXT.md
+#
+# File ownership (D-05):
+#   - docs/*.md           user-owned    (touched only when absent, unless --force)
+#   - mkdocs.yml          scaffold-owned (always overwritten; diff to stderr on change)
+#   - requirements-docs.txt scaffold-owned (always overwritten; diff to stderr on change)
+#
+# Repo-type auto-detection (D-09, D-10):
+#   - pyproject.toml present  → python (wins on mixed)
+#   - else package.json       → ts
+#   - else                    → docs-only
+#
+# Python repos additionally get docs/api.md (D-11). Package name comes from
+# [project].name in pyproject.toml, falling back to directory basename, with
+# hyphens normalized to underscores so the value is a valid Python import path
+# (D-13: cos-core → cos_core, cos-docs → cos_docs).
+
+usage() {
+    cat >&2 <<'USAGE'
+Usage: scaffold.sh [--force] <path-to-target-repo>
+  --force   Also overwrite user-owned docs/*.md files
+
+Drops MkDocs Material scaffold (docs/, mkdocs.yml, requirements-docs.txt)
+into the target repo. Auto-detects repo type from pyproject.toml/package.json.
+USAGE
+}
+
+# ---------------------------------------------------------------------------
+# Argument parsing (D-03, D-08)
+# ---------------------------------------------------------------------------
+
+FORCE=0
+TARGET_REPO=""
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --force)
+            FORCE=1
+            shift
+            ;;
+        -h|--help)
+            usage
+            exit 0
+            ;;
+        --*)
+            echo "Error: unknown flag '$1'" >&2
+            usage
+            exit 2
+            ;;
+        *)
+            if [ -n "$TARGET_REPO" ]; then
+                echo "Error: too many positional arguments" >&2
+                usage
+                exit 2
+            fi
+            TARGET_REPO="$1"
+            shift
+            ;;
+    esac
+done
+
+if [ -z "$TARGET_REPO" ]; then
+    echo "Error: missing required <path-to-target-repo>" >&2
+    usage
+    exit 2
+fi
+
+if [ ! -d "$TARGET_REPO" ]; then
+    echo "Error: target path does not exist or is not a directory: $TARGET_REPO" >&2
+    exit 3
+fi
+
+# Resolve to absolute path
+TARGET_REPO=$(cd "$TARGET_REPO" && pwd)
+
+# ---------------------------------------------------------------------------
+# Detection helpers (D-09, D-10, D-13)
+# ---------------------------------------------------------------------------
+
+detect_repo_type() {
+    if [ -f "${TARGET_REPO}/pyproject.toml" ]; then
+        echo "python"
+    elif [ -f "${TARGET_REPO}/package.json" ]; then
+        echo "ts"
+    else
+        echo "docs-only"
+    fi
+}
+
+detect_python_package() {
+    local raw_name=""
+    if [ -f "${TARGET_REPO}/pyproject.toml" ]; then
+        # Parse [project].name. Use sed range — portable across awk variants.
+        raw_name=$(sed -nE '/^\[project\]/,/^\[/{ s/^name[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/p; }' \
+            "${TARGET_REPO}/pyproject.toml" 2>/dev/null | head -n1 || true)
+    fi
+    if [ -z "$raw_name" ]; then
+        raw_name=$(basename "$TARGET_REPO")
+    fi
+    # D-13: normalize hyphens → underscores in BOTH paths (pyproject + fallback).
+    local pkg_name="${raw_name//-/_}"
+    echo "$pkg_name"
+}
+
+# ---------------------------------------------------------------------------
+# Placeholder emit functions — Plan 02 replaces bodies with real heredocs.
+# Each writes its template body to stdout.
+# ---------------------------------------------------------------------------
+
+emit_index_md() {
+    echo "TODO: Plan 02 will provide docs/index.md template"
+}
+
+emit_architecture_md() {
+    echo "TODO: Plan 02 will provide docs/architecture.md template"
+}
+
+emit_api_md() {
+    local pkg="$1"
+    echo "TODO: Plan 02 will provide docs/api.md template for package ${pkg}"
+}
+
+emit_mkdocs_yml() {
+    local site_name="$1"
+    echo "TODO: Plan 02 will provide mkdocs.yml template with site_name ${site_name}"
+}
+
+emit_requirements_docs_txt() {
+    echo "TODO: Plan 02 will provide requirements-docs.txt with pinned versions"
+}
+
+# ---------------------------------------------------------------------------
+# Write helpers (D-05, D-06)
+# ---------------------------------------------------------------------------
+
+# write_user_owned <relative_path> <emit_command...>
+# User-owned: skip if exists unless FORCE=1.
+write_user_owned() {
+    local rel_path="$1"
+    shift
+    local abs_path="${TARGET_REPO}/${rel_path}"
+
+    if [ -e "$abs_path" ] && [ "$FORCE" -eq 0 ]; then
+        echo "[skip] ${rel_path} (exists, use --force to overwrite)" >&2
+        return 0
+    fi
+
+    mkdir -p "$(dirname "$abs_path")"
+    local tmp="${abs_path}.tmp.$$"
+    "$@" > "$tmp"
+    mv "$tmp" "$abs_path"
+    echo "[write] ${rel_path}" >&2
+}
+
+# write_scaffold_owned <relative_path> <emit_command...>
+# Scaffold-owned: always overwrite. If pre-existing content differs, print
+# unified diff to stderr (D-06). Suppress entirely when diff is empty.
+write_scaffold_owned() {
+    local rel_path="$1"
+    shift
+    local abs_path="${TARGET_REPO}/${rel_path}"
+
+    mkdir -p "$(dirname "$abs_path")"
+    local tmp="${abs_path}.tmp.$$"
+    "$@" > "$tmp"
+
+    if [ -e "$abs_path" ]; then
+        # Capture diff; suppress empty-diff entirely (D-06).
+        local diff_out
+        diff_out=$(diff -u "$abs_path" "$tmp" || true)
+        if [ -n "$diff_out" ]; then
+            echo "[overwrite] ${rel_path} (diff below)" >&2
+            printf '%s\n' "$diff_out" >&2
+        fi
+        # else: silent — content unchanged.
+    else
+        echo "[write] ${rel_path}" >&2
+    fi
+
+    mv "$tmp" "$abs_path"
+}
+
+# ---------------------------------------------------------------------------
+# Main
+# ---------------------------------------------------------------------------
+
+main() {
+    local repo_type
+    repo_type=$(detect_repo_type)
+    local site_name
+    site_name=$(basename "$TARGET_REPO")
+
+    echo "[scaffold] target=${TARGET_REPO} type=${repo_type} force=${FORCE}" >&2
+
+    mkdir -p "${TARGET_REPO}/docs"
+
+    # User-owned docs (D-05)
+    write_user_owned "docs/index.md" emit_index_md
+    write_user_owned "docs/architecture.md" emit_architecture_md
+
+    # Python-only api.md (D-11)
+    if [ "$repo_type" = "python" ]; then
+        local pkg
+        pkg=$(detect_python_package)
+        write_user_owned "docs/api.md" emit_api_md "$pkg"
+    fi
+
+    # Scaffold-owned files (D-05, D-06)
+    write_scaffold_owned "mkdocs.yml" emit_mkdocs_yml "$site_name"
+    write_scaffold_owned "requirements-docs.txt" emit_requirements_docs_txt
+
+    echo "[scaffold] done" >&2
+}
+
+main
