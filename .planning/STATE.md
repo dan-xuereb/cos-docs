@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-04-18T00:00:00.000Z"
+last_updated: "2026-04-19T00:00:00.000Z"
 progress:
   total_phases: 4
   completed_phases: 1
@@ -86,8 +86,8 @@ Plan: 2 of 2 — complete
 
 ## Session Continuity
 
-**Last session:** 2026-04-18 — Plan 01-02 executed: emit_* heredoc bodies populated (Mermaid superfences, mkdocstrings ::: block, pinned requirements with PyPI-resolved D-16 versions); E2E smoke against COS-Core verified Mermaid rendering AND Pydantic v2 field docstring rendering in built site (`Lowercase exchange name` from OHLCVBar.exchange found 4× in api/index.html). Auto-fixed missing griffe_pydantic extension + show_submodules in mkdocstrings handler config.
-**Next action:** Phase 1 complete. Begin Phase 2 (Content Migration) — scaffold all ~25 sibling repos, migrate README/CLAUDE.md content into docs/ trees.
+**Last session:** 2026-04-19 — Phase 2 context gathered (`/gsd-discuss-phase 2`). Decisions D-01..D-13 captured in `.planning/phases/02-content-migration/02-CONTEXT.md`: thin wrapper `scaffold-all.sh` over Phase 1 D-04 single-repo scaffold; one commit per sibling repo on main; continue-on-failure with summary; per-repo `mkdocs build --strict` smoke gate; **hand-author** content per repo (LLM-assist rejected); api.md = auto `:::` block + curated submodule list; **diagrams skipped** for trivial/docs-only repos (D-08 — explicit DIAG-02 deviation, requirements amendment flagged); CLAUDE.md project map is the authoritative repo list; lowercase `capability-gated-agent-architecture` excluded as duplicate.
+**Next action:** Phase 2 ready for planning — `/gsd-plan-phase 2`.
 **Files in play:**
 
 - `.planning/PROJECT.md`
