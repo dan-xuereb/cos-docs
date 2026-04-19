@@ -40,7 +40,7 @@ Plans:
   5. `mkdocs serve` works locally inside any of the migrated repos with no broken references
 **Plans:** 3 plans
 Plans:
-- [ ] 02-01-PLAN.md — scaffold-all.sh wrapper + scaffold.sh --package amendment + PACKAGE_OVERRIDES (D-01, D-14, D-17)
+- [x] 02-01-PLAN.md — scaffold-all.sh wrapper + scaffold.sh --package amendment + PACKAGE_OVERRIDES (D-01, D-14, D-17) ✓ 2026-04-19 (63b2246, 78c5101)
 - [ ] 02-02-PLAN.md — Run rollout, triage failures, amend REQUIREMENTS.md DIAG-02, update CLAUDE.md project map (CONT-01, DIAG-02)
 - [ ] 02-03-PLAN.md — Hand-author per-repo content across 5 domain groups (CONT-02, CONT-03, CONT-04, D-05)
 
@@ -72,7 +72,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Scaffold & Template | 2/2 | Complete | 2026-04-18 |
-| 2. Content Migration | 0/3 | Not started | - |
+| 2. Content Migration | 1/3 | In progress | - |
 | 3. Aggregator & API Strategy | 0/0 | Not started | - |
 | 4. Deploy & CI | 0/0 | Not started | - |
 

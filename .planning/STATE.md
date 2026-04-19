@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-04-19T00:00:00.000Z"
+last_updated: "2026-04-19T19:23:48.000Z"
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 5
-  completed_plans: 2
-  percent: 25
+  completed_plans: 3
+  percent: 35
 ---
 
 # State: cos-docs
@@ -24,13 +24,13 @@ progress:
 
 ## Current Position
 
-Phase: 1 (Scaffold & Template) — COMPLETE
-Plan: 2 of 2 — complete
+Phase: 2 (Content Migration) — IN PROGRESS
+Plan: 1 of 3 — complete
 
-- **Phase:** 1 — Scaffold & Template (Complete)
-- **Plan:** 01-01 (32a5cf5); 01-02 (350edac, 287564a, ded6955) complete
-- **Status:** Phase 1 complete; ready for Phase 2 (Content Migration)
-- **Progress:** [■□□□] 1/4 phases complete (2/2 plans of phase 1)
+- **Phase:** 2 — Content Migration (Wave 1 of 3 complete)
+- **Plan:** 02-01 (63b2246, 78c5101) complete; ready for 02-02 (rollout sweep)
+- **Status:** Rollout tooling shipped; ready for plan 02-02 (full sweep + triage)
+- **Progress:** [■■□□] 1/4 phases complete + 1/3 plans of phase 2
 
 ## Performance Metrics
 
@@ -38,9 +38,13 @@ Plan: 2 of 2 — complete
 |--------|-------|
 | Phases planned | 4 |
 | Phases complete | 1 |
-| Plans complete | 2 |
+| Plans complete | 3 |
 | v1 requirements mapped | 26/26 |
 | Spikes completed | 4 (all ✓ VALIDATED) |
+
+| Plan | Duration (s) | Tasks | Files | Commits |
+|------|--------------|-------|-------|---------|
+| 02-01 | 276 | 2 | 2 | 2 (63b2246, 78c5101) |
 
 ## Accumulated Context
 
@@ -57,6 +61,14 @@ Plan: 2 of 2 — complete
 - Pin MkDocs Material + plugin versions explicitly (Material 2.0 will break plugins)
 - Scaffold all ~25 repos in v1, not a pilot subset
 - Per-repo `docs/` trees stay self-contained (no build-time deps imposed on sibling repos)
+
+### Decisions From Plan 02-01
+
+- ROLLOUT_LIST encoded as a 30-entry bash array with EXCLUDE_LIST short-circuit at preflight (vs. trimming to 28) — preserves D-14 audit count exactly; FATAL guard verifies `${#ROLLOUT_LIST[@]} == 30` at script load
+- PACKAGE_OVERRIDES seeded with only verified mismatch (COS-LangGraph→langgraph_agent); additional overrides discovered empirically when 02-02 first runs `mkdocs build --strict` across all 30 repos
+- scaffold.sh `--package` warning on non-python repos is non-fatal so wrapper can pass it unconditionally based on overrides map (no per-repo type-aware branching needed at the wrapper layer)
+- EXCLUDE_LIST and PACKAGE_OVERRIDES use `declare -A NAME=()` + per-key assignment (vs. inline `( [k]=v )`) so plan-spec verify regex `EXCLUDE_LIST\[cos-docs\]` matches exactly
+- COS-Core deliberately omitted from ROLLOUT_LIST: it lacks its own `.git/`, lives in parent `/home/btc/github` repo; re-scaffold via direct `scaffold.sh /home/btc/github/COS-Core` only
 
 ### Decisions From Plan 01-02
 
@@ -86,8 +98,8 @@ Plan: 2 of 2 — complete
 
 ## Session Continuity
 
-**Last session:** 2026-04-19 — Phase 2 planned (`/gsd-plan-phase 2`). Research surfaced 4 critical gaps prompting CONTEXT.md amendment D-14..D-17 (30-repo scope vs stale 25-repo CLAUDE.md map; main+master accepted, dirty trees skipped, PACKAGE_OVERRIDES map for COS-LangGraph et al.). Planner produced 3 plans in 3 waves (02-01 wrapper script + scaffold.sh `--package` amendment; 02-02 rollout sweep + REQUIREMENTS.md DIAG-02 amendment + workspace CLAUDE.md project-map update; 02-03 hand-authoring across 5 domain-group checkpoints). Plan checker: 1 BLOCKER + 4 WARNINGS on iteration 1 (ROLLOUT_LIST count contradiction, weak content-acceptance, missing success-criterion-#5 trace); revised; iteration 2 PASSED. All 5 phase REQ-IDs covered (CONT-01..04, DIAG-02). Plans 02-02 and 02-03 marked `autonomous: false` (failure triage + hand-authoring need human judgment).
-**Next action:** Execute Phase 2 — `/gsd-execute-phase 2` (start with wave 1 = 02-01 wrapper script).
+**Last session:** 2026-04-19 — Executed plan 02-01 (rollout tooling). Two commits: 63b2246 (scaffold.sh `--package <name>` flag, D-17) and 78c5101 (scaffold-all.sh wrapper, D-01..D-17). ROLLOUT_LIST = 30 entries (D-14 audit, FATAL guard); EXCLUDE_LIST = 2 (cos-docs, capability-gated-agent-architecture); DIAGRAM_EXEMPT = 3 (Hardware, Network, CGAA); PACKAGE_OVERRIDES = 1 seeded (COS-LangGraph→langgraph_agent). All plan-spec verify greps pass; anti-regression confirmed (Phase 1 COS-Core fallback path produces `::: cos_core` unchanged). Optional dry-run skipped — full sweep is the deliverable of plan 02-02.
+**Next action:** Execute Phase 2 wave 2 — plan 02-02 (rollout sweep, failure triage, REQUIREMENTS.md DIAG-02 amendment, workspace CLAUDE.md project-map update). `autonomous: false` — needs human judgment for failure triage.
 **Files in play:**
 
 - `.planning/PROJECT.md`
