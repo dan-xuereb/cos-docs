@@ -1,0 +1,84 @@
+# Roadmap: cos-docs
+
+**Created:** 2026-04-18
+**Granularity:** coarse (4 phases)
+**Core Value:** A single URL where every COS / Xuer Capital repo's architecture, API, and diagrams are searchable and cross-linked — built from per-repo `docs/` trees that live next to the code they describe.
+
+## Phases
+
+- [ ] **Phase 1: Scaffold & Template** — Build the per-repo doc scaffold tool and pinned template that downstream content depends on
+- [ ] **Phase 2: Content Migration** — Scaffold all ~25 sibling repos and migrate README/CLAUDE.md content into the per-repo docs trees
+- [ ] **Phase 3: Aggregator & API Strategy** — Compose all repos via mkdocs-monorepo-plugin, decide and implement the API-docs strategy, ship the workspace-wide diagram
+- [ ] **Phase 4: Deploy & CI** — Containerize, deploy to Talos NodePort 30081, automate nightly + on-push rebuilds
+
+## Phase Details
+
+### Phase 1: Scaffold & Template
+**Goal**: A maintainer can run `scaffold.sh <repo>` and get a working, locally-previewable per-repo docs tree with pinned MkDocs Material + plugins, Mermaid rendering, and Pydantic-aware API rendering wired in.
+**Depends on**: Nothing (first phase; spike findings already validated)
+**Requirements**: SCAF-01, SCAF-02, SCAF-03, SCAF-04, DIAG-01, API-01
+**Success Criteria** (what must be TRUE):
+  1. Running `scaffold.sh <target-repo>` creates `docs/index.md`, `docs/architecture.md`, `docs/api.md`, `mkdocs.yml`, and a pinned requirements file in that repo
+  2. Inside a freshly-scaffolded repo, `mkdocs serve` previews the site locally with no missing-plugin errors
+  3. A Mermaid fenced code block in `docs/architecture.md` renders as an SVG diagram in the local preview
+  4. A Pydantic v2 model with trailing-string field docstrings renders its field docs natively on `docs/api.md`
+  5. Re-running `scaffold.sh` on an already-scaffolded repo does not clobber edited `docs/*.md` content
+**Plans**: TBD
+
+### Phase 2: Content Migration
+**Goal**: Every one of the ~25 sibling repos in `/home/btc/github/` has a populated `docs/` tree describing its purpose, architecture, and primary API surface — sourced from existing `README.md` + `CLAUDE.md`.
+**Depends on**: Phase 1
+**Requirements**: CONT-01, CONT-02, CONT-03, CONT-04, DIAG-02
+**Success Criteria** (what must be TRUE):
+  1. All ~25 sibling repos in `/home/btc/github/` have been scaffolded (each contains `docs/` and `mkdocs.yml`)
+  2. Each repo's `docs/index.md` summarizes its purpose, language/runtime, and entry points
+  3. Each repo's `docs/architecture.md` contains at least one Mermaid diagram of internal structure plus a written overview
+  4. Each Python repo's `docs/api.md` lists the primary public modules/classes/functions targeted for `mkdocstrings` rendering
+  5. `mkdocs serve` works locally inside any of the migrated repos with no broken references
+**Plans**: TBD
+
+### Phase 3: Aggregator & API Strategy
+**Goal**: A single `mkdocs build` from `cos-docs/` produces a complete static site composing all 25 repos, grouped by domain, with a workspace-wide architecture diagram and fully-rendered Python API pages using a decided-and-recorded API strategy.
+**Depends on**: Phase 2
+**Requirements**: AGGR-01, AGGR-02, AGGR-03, AGGR-04, AGGR-05, DIAG-03, API-02, API-03
+**Success Criteria** (what must be TRUE):
+  1. `mkdocs build` from `cos-docs/` completes with zero "reference not found" warnings and zero broken `!include` errors
+  2. The built site's left-nav groups all ~25 repos under domain headers (Forges, Signal Stack, Agent, Presentation, Warehouse, Network, Schema, Infrastructure)
+  3. The aggregator's top-level `docs/index.md` and `docs/architecture.md` exist and the architecture page renders a workspace-wide Mermaid data-flow diagram
+  4. Material's default lunr search returns hits from across multiple aggregated repos for representative queries
+  5. The API-docs strategy (mega-venv vs pre-rendered per-repo CI) is recorded as a Key Decision in `PROJECT.md` AND the chosen strategy is implemented such that every Python repo has populated API pages in the built site
+**Plans**: TBD
+
+### Phase 4: Deploy & CI
+**Goal**: The aggregated site is reachable at `http://10.70.0.102:30081/` from a containerized deploy on Talos, and a GitHub Actions workflow rebuilds it nightly, on push to `main`, and on manual dispatch.
+**Depends on**: Phase 3
+**Requirements**: DEPLOY-01, DEPLOY-02, DEPLOY-03, DEPLOY-04, CI-01, CI-02, CI-03
+**Success Criteria** (what must be TRUE):
+  1. A multi-stage `Dockerfile` in `cos-docs/` builds the static site and serves it from nginx, producing a runnable image
+  2. `kubectl apply -k cos-docs/k8s/` deploys the site to the Talos cluster with a `control-plane` taint toleration, pulling from the private registry `10.70.0.30:5000`
+  3. `curl http://10.70.0.102:30081/` returns the rendered aggregator landing page with HTTP 200
+  4. A GitHub Actions workflow runs on nightly schedule, on push to `main`, and on `workflow_dispatch`, and produces a deployable image (or pushes to the private registry)
+**Plans**: TBD
+
+## Progress
+
+| Phase | Plans Complete | Status | Completed |
+|-------|----------------|--------|-----------|
+| 1. Scaffold & Template | 0/0 | Not started | - |
+| 2. Content Migration | 0/0 | Not started | - |
+| 3. Aggregator & API Strategy | 0/0 | Not started | - |
+| 4. Deploy & CI | 0/0 | Not started | - |
+
+## Coverage
+
+All 26 v1 requirements mapped to exactly one phase. No orphans.
+
+| Phase | Requirement Count | Requirements |
+|-------|-------------------|--------------|
+| 1 | 6 | SCAF-01, SCAF-02, SCAF-03, SCAF-04, DIAG-01, API-01 |
+| 2 | 5 | CONT-01, CONT-02, CONT-03, CONT-04, DIAG-02 |
+| 3 | 8 | AGGR-01, AGGR-02, AGGR-03, AGGR-04, AGGR-05, DIAG-03, API-02, API-03 |
+| 4 | 7 | DEPLOY-01, DEPLOY-02, DEPLOY-03, DEPLOY-04, CI-01, CI-02, CI-03 |
+
+---
+*Roadmap created: 2026-04-18*
