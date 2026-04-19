@@ -38,7 +38,11 @@ Plans:
   3. Each repo's `docs/architecture.md` contains at least one Mermaid diagram of internal structure plus a written overview
   4. Each Python repo's `docs/api.md` lists the primary public modules/classes/functions targeted for `mkdocstrings` rendering
   5. `mkdocs serve` works locally inside any of the migrated repos with no broken references
-**Plans**: TBD
+**Plans:** 3 plans
+Plans:
+- [ ] 02-01-PLAN.md — scaffold-all.sh wrapper + scaffold.sh --package amendment + PACKAGE_OVERRIDES (D-01, D-14, D-17)
+- [ ] 02-02-PLAN.md — Run rollout, triage failures, amend REQUIREMENTS.md DIAG-02, update CLAUDE.md project map (CONT-01, DIAG-02)
+- [ ] 02-03-PLAN.md — Hand-author per-repo content across 5 domain groups (CONT-02, CONT-03, CONT-04, D-05)
 
 ### Phase 3: Aggregator & API Strategy
 **Goal**: A single `mkdocs build` from `cos-docs/` produces a complete static site composing all 25 repos, grouped by domain, with a workspace-wide architecture diagram and fully-rendered Python API pages using a decided-and-recorded API strategy.
@@ -50,7 +54,7 @@ Plans:
   3. The aggregator's top-level `docs/index.md` and `docs/architecture.md` exist and the architecture page renders a workspace-wide Mermaid data-flow diagram
   4. Material's default lunr search returns hits from across multiple aggregated repos for representative queries
   5. The API-docs strategy (mega-venv vs pre-rendered per-repo CI) is recorded as a Key Decision in `PROJECT.md` AND the chosen strategy is implemented such that every Python repo has populated API pages in the built site
-**Plans**: TBD
+**Plans:** 3 plans
 
 ### Phase 4: Deploy & CI
 **Goal**: The aggregated site is reachable at `http://10.70.0.102:30081/` from a containerized deploy on Talos, and a GitHub Actions workflow rebuilds it nightly, on push to `main`, and on manual dispatch.
@@ -61,14 +65,14 @@ Plans:
   2. `kubectl apply -k cos-docs/k8s/` deploys the site to the Talos cluster with a `control-plane` taint toleration, pulling from the private registry `10.70.0.30:5000`
   3. `curl http://10.70.0.102:30081/` returns the rendered aggregator landing page with HTTP 200
   4. A GitHub Actions workflow runs on nightly schedule, on push to `main`, and on `workflow_dispatch`, and produces a deployable image (or pushes to the private registry)
-**Plans**: TBD
+**Plans:** 3 plans
 
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Scaffold & Template | 2/2 | Complete | 2026-04-18 |
-| 2. Content Migration | 0/0 | Not started | - |
+| 2. Content Migration | 0/3 | Not started | - |
 | 3. Aggregator & API Strategy | 0/0 | Not started | - |
 | 4. Deploy & CI | 0/0 | Not started | - |
 
