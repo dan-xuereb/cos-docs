@@ -1,3 +1,17 @@
+---
+gsd_state_version: 1.0
+milestone: v1.0
+milestone_name: milestone
+status: executing
+last_updated: "2026-04-19T07:18:23.430Z"
+progress:
+  total_phases: 4
+  completed_phases: 0
+  total_plans: 2
+  completed_plans: 0
+  percent: 0
+---
+
 # State: cos-docs
 
 **Initialized:** 2026-04-18
@@ -12,7 +26,7 @@
 
 - **Phase:** 1 — Scaffold & Template (Not started)
 - **Plan:** None (awaiting `/gsd-plan-phase 1`)
-- **Status:** Roadmap approved; ready for phase planning
+- **Status:** Ready to execute
 - **Progress:** [□□□□] 0/4 phases complete
 
 ## Performance Metrics
@@ -28,24 +42,29 @@
 ## Accumulated Context
 
 ### Validated Spikes (pre-roadmap, 2026-04-18)
+
 1. `monorepo-plugin-aggregation` — `mkdocs-monorepo-plugin` with `!include` works for sibling-repo aggregation
 2. `pydantic-mkdocstrings` — `mkdocstrings[python]` + `griffe-pydantic` renders Pydantic v2 trailing-string field docs natively
 3. `mermaid-architecture-diagrams` — `pymdownx.superfences` + Material's bundled `mermaid.min.js` renders inline Mermaid (no extra plugin)
 4. `talos-nginx-deploy` — Multi-stage Dockerfile + Kustomize → Talos NodePort pattern works (mirrors `quant-dashboard` deploy)
 
 ### Key Decisions Carried From PROJECT.md
+
 - Use `!include` (NOT `!import`) — wrong directive fails silently
 - Pin MkDocs Material + plugin versions explicitly (Material 2.0 will break plugins)
 - Scaffold all ~25 repos in v1, not a pilot subset
 - Per-repo `docs/` trees stay self-contained (no build-time deps imposed on sibling repos)
 
 ### Open Decisions
+
 - **API-02**: API-docs strategy (mega-venv vs pre-rendered per-repo CI) — must be decided in Phase 3 before Phase 4 (Deploy)
 
 ### Todos
+
 - (none yet)
 
 ### Blockers
+
 - (none)
 
 ## Session Continuity
@@ -53,6 +72,7 @@
 **Last session:** 2026-04-18 — project initialization, requirements definition, roadmap creation
 **Next action:** Run `/gsd-plan-phase 1` to decompose Phase 1 into executable plans
 **Files in play:**
+
 - `.planning/PROJECT.md`
 - `.planning/REQUIREMENTS.md`
 - `.planning/ROADMAP.md`

@@ -17,13 +17,16 @@
 **Goal**: A maintainer can run `scaffold.sh <repo>` and get a working, locally-previewable per-repo docs tree with pinned MkDocs Material + plugins, Mermaid rendering, and Pydantic-aware API rendering wired in.
 **Depends on**: Nothing (first phase; spike findings already validated)
 **Requirements**: SCAF-01, SCAF-02, SCAF-03, SCAF-04, DIAG-01, API-01
+**Plans:** 2 plans
 **Success Criteria** (what must be TRUE):
   1. Running `scaffold.sh <target-repo>` creates `docs/index.md`, `docs/architecture.md`, `docs/api.md`, `mkdocs.yml`, and a pinned requirements file in that repo
   2. Inside a freshly-scaffolded repo, `mkdocs serve` previews the site locally with no missing-plugin errors
   3. A Mermaid fenced code block in `docs/architecture.md` renders as an SVG diagram in the local preview
   4. A Pydantic v2 model with trailing-string field docstrings renders its field docs natively on `docs/api.md`
   5. Re-running `scaffold.sh` on an already-scaffolded repo does not clobber edited `docs/*.md` content
-**Plans**: TBD
+Plans:
+- [ ] 01-01-PLAN.md — scaffold.sh skeleton: arg parsing, repo-type detection, ownership/idempotency, --force, diff-on-overwrite (D-01,D-03,D-05..D-11,D-13)
+- [ ] 01-02-PLAN.md — embedded heredoc templates (mkdocs.yml + Mermaid superfences, pinned requirements-docs.txt, mkdocstrings api.md) + E2E smoke vs COS-Core (D-12,D-14..D-17, DIAG-01, API-01)
 
 ### Phase 2: Content Migration
 **Goal**: Every one of the ~25 sibling repos in `/home/btc/github/` has a populated `docs/` tree describing its purpose, architecture, and primary API surface — sourced from existing `README.md` + `CLAUDE.md`.
