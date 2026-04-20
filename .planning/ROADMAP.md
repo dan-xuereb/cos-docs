@@ -55,6 +55,10 @@ Plans:
   4. Material's default lunr search returns hits from across multiple aggregated repos for representative queries
   5. The API-docs strategy (mega-venv vs pre-rendered per-repo CI) is recorded as a Key Decision in `PROJECT.md` AND the chosen strategy is implemented such that every Python repo has populated API pages in the built site
 **Plans:** 3 plans
+Plans:
+- [ ] 03-01-PLAN.md — Aggregator mkdocs.yml + requirements-docs.txt + placeholder index.md + strict-build smoke (AGGR-01, AGGR-02, AGGR-04, AGGR-05)
+- [ ] 03-02-PLAN.md — build-all-api.sh per-repo isolated-venv loop + BTC-Forge/COS-MSE docstring fixes + PROJECT.md Key Decision (API-02, API-03)
+- [ ] 03-03-PLAN.md — Workspace Mermaid + full index.md + Architecture nav + final end-to-end strict-build (AGGR-03, DIAG-03)
 
 ### Phase 4: Deploy & CI
 **Goal**: The aggregated site is reachable at `http://10.70.0.102:30081/` from a containerized deploy on Talos, and a GitHub Actions workflow rebuilds it nightly, on push to `main`, and on manual dispatch.
