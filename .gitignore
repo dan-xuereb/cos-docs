@@ -1,0 +1,19 @@
+# cos-docs .gitignore
+
+# MkDocs build output -- produced by `mkdocs build` and `build-all-api.sh`.
+site/
+site-manifest.json
+
+# Per-repo API pre-render venvs created by build-all-api.sh in sibling repos
+# are ignored inside those sibling repos (not here), but local aggregator
+# venvs during smoke testing live here:
+.venv-aggr-local/
+.venv-agg/
+
+# Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+
+# build-all-api.sh status file (CI reads this, not committed)
+.build-all-api-status.md
