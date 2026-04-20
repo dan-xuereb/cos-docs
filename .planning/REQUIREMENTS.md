@@ -23,7 +23,7 @@
 
 - [x] **AGGR-01**: The aggregator `mkdocs.yml` in `cos-docs/` uses `mkdocs-monorepo-plugin` with `!include ../<repo>/mkdocs.yml` entries for all 25 repos (29 in final count; 03-01)
 - [x] **AGGR-02**: Aggregator navigation groups repos by domain: Forges, Signal Stack, Agent, Presentation, Warehouse, Network, Schema, Infrastructure (03-01)
-- [ ] **AGGR-03**: Aggregator includes a top-level `docs/index.md` workspace overview and a top-level `docs/architecture.md` with a workspace-wide Mermaid data-flow diagram
+- [x] **AGGR-03**: Aggregator includes a top-level `docs/index.md` workspace overview and a top-level `docs/architecture.md` with a workspace-wide Mermaid data-flow diagram (03-03; 29-row repo index + 9-subgraph Mermaid)
 - [x] **AGGR-04**: `mkdocs build` from `cos-docs/` produces a complete static site with no broken `!include` references and no missing-anchor warnings (03-01 strict-build exit 0)
 - [x] **AGGR-05**: Material default search (lunr) works across all aggregated content with no extra plugin (03-01; `search` plugin active)
 
@@ -31,13 +31,13 @@
 
 - [ ] **DIAG-01**: Mermaid fenced code blocks render in both per-repo and aggregator builds via `pymdownx.superfences` and Material's bundled `mermaid.min.js` (no extra plugin)
 - [ ] **DIAG-02**: At least one Mermaid architecture diagram exists per non-exempt repo (in `docs/architecture.md`). Exempt repos (no software architecture to diagram): `COS-Hardware`, `COS-Network`, `COS-Capability-Gated-Agent-Architecture`. Exempt list maintained in `cos-docs/scripts/scaffold-all.sh` (DIAGRAM_EXEMPT array); additions during Phase 2 authoring update both that array and this requirement footnote.
-- [ ] **DIAG-03**: A top-level workspace data-flow Mermaid diagram exists in the aggregator
+- [x] **DIAG-03**: A top-level workspace data-flow Mermaid diagram exists in the aggregator (03-03; hand-authored flowchart LR, 9 subgraphs + 6 critical arrows)
 
 ### API Docs
 
 - [ ] **API-01**: Pydantic v2 models with trailing-string field docstrings render their field docs natively via `mkdocstrings[python]` + `griffe-pydantic`
-- [ ] **API-02**: API-docs strategy decision is recorded as a Key Decision in `PROJECT.md` before deploy phase begins (mega-venv vs pre-rendered per-repo CI)
-- [ ] **API-03**: The chosen API-docs strategy is implemented and produces complete API pages for all Python repos
+- [x] **API-02**: API-docs strategy decision is recorded as a Key Decision in `PROJECT.md` before deploy phase begins (mega-venv vs pre-rendered per-repo CI) (03-02; pre-rendered per-repo strategy recorded with upstream #73 + 02-02 evidence trail)
+- [x] **API-03**: The chosen API-docs strategy is implemented and produces complete API pages for all Python repos (03-02; 20/20 OK via build-all-api.sh isolated-venv loop)
 
 ### Deploy
 
@@ -93,12 +93,12 @@
 | DIAG-02 | Phase 2 | Pending |
 | AGGR-01 | Phase 3 | Complete (03-01) |
 | AGGR-02 | Phase 3 | Complete (03-01) |
-| AGGR-03 | Phase 3 | Pending |
+| AGGR-03 | Phase 3 | Complete (03-03) |
 | AGGR-04 | Phase 3 | Complete (03-01) |
 | AGGR-05 | Phase 3 | Complete (03-01) |
-| DIAG-03 | Phase 3 | Pending |
-| API-02 | Phase 3 | Pending |
-| API-03 | Phase 3 | Pending |
+| DIAG-03 | Phase 3 | Complete (03-03) |
+| API-02 | Phase 3 | Complete (03-02) |
+| API-03 | Phase 3 | Complete (03-02) |
 | DEPLOY-01 | Phase 4 | Pending |
 | DEPLOY-02 | Phase 4 | Pending |
 | DEPLOY-03 | Phase 4 | Pending |

@@ -8,7 +8,7 @@
 
 - [ ] **Phase 1: Scaffold & Template** — Build the per-repo doc scaffold tool and pinned template that downstream content depends on
 - [ ] **Phase 2: Content Migration** — Scaffold all ~25 sibling repos and migrate README/CLAUDE.md content into the per-repo docs trees
-- [ ] **Phase 3: Aggregator & API Strategy** — Compose all repos via mkdocs-monorepo-plugin, decide and implement the API-docs strategy, ship the workspace-wide diagram
+- [x] **Phase 3: Aggregator & API Strategy** — Compose all repos via mkdocs-monorepo-plugin, decide and implement the API-docs strategy, ship the workspace-wide diagram ✓ 2026-04-20
 - [ ] **Phase 4: Deploy & CI** — Containerize, deploy to Talos NodePort 30081, automate nightly + on-push rebuilds
 
 ## Phase Details
@@ -57,8 +57,8 @@ Plans:
 **Plans:** 3 plans
 Plans:
 - [x] 03-01-PLAN.md — Aggregator mkdocs.yml + requirements-docs.txt + placeholder index.md + strict-build smoke (AGGR-01, AGGR-02, AGGR-04, AGGR-05) ✓ 2026-04-20 (d8b9027, eb1611d cos-docs + 4 sibling scaffold CPs)
-- [ ] 03-02-PLAN.md — build-all-api.sh per-repo isolated-venv loop + BTC-Forge/COS-MSE docstring fixes + PROJECT.md Key Decision (API-02, API-03)
-- [ ] 03-03-PLAN.md — Workspace Mermaid + full index.md + Architecture nav + final end-to-end strict-build (AGGR-03, DIAG-03)
+- [x] 03-02-PLAN.md — build-all-api.sh per-repo isolated-venv loop + BTC-Forge/COS-MSE docstring fixes + PROJECT.md Key Decision (API-02, API-03) ✓ 2026-04-19 (5e174d1, 2a6c285, d519714)
+- [x] 03-03-PLAN.md — Workspace Mermaid + full index.md + Architecture nav + final end-to-end strict-build (AGGR-03, DIAG-03) ✓ 2026-04-20 (e2e291f, 879f6fc, 18c6973)
 
 ### Phase 4: Deploy & CI
 **Goal**: The aggregated site is reachable at `http://10.70.0.102:30081/` from a containerized deploy on Talos, and a GitHub Actions workflow rebuilds it nightly, on push to `main`, and on manual dispatch.
@@ -77,7 +77,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Scaffold & Template | 2/2 | Complete | 2026-04-18 |
 | 2. Content Migration | 2/3 | In progress | - |
-| 3. Aggregator & API Strategy | 1/3 | In progress | - |
+| 3. Aggregator & API Strategy | 3/3 | Complete | 2026-04-20 |
 | 4. Deploy & CI | 0/0 | Not started | - |
 
 ## Coverage

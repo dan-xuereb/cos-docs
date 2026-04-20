@@ -3,13 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-04-20T05:36:00.000Z"
+last_updated: "2026-04-20T05:43:45.000Z"
 progress:
   total_phases: 4
   completed_phases: 2
   total_plans: 8
-  completed_plans: 7
+  completed_plans: 8
   percent: 88
+# Note: Phase 3 complete (all 3 plans); Phase 2 still has 02-03 pending (content authoring).
+# total_plans excludes Phase 4 (not yet planned at plan-granularity).
 ---
 
 # State: cos-docs
@@ -24,13 +26,13 @@ progress:
 
 ## Current Position
 
-Phase: 3 (Aggregator & API Strategy) — IN PROGRESS
-Plan: 2 of 3 — complete
+Phase: 3 (Aggregator & API Strategy) — COMPLETE
+Plan: 3 of 3 — complete
 
-- **Phase:** 3 — Aggregator & API Strategy (Wave 2 of 3 complete)
-- **Plan:** 03-02 (5e174d1 + 2a6c285 + d519714 in cos-docs) complete; ready for 03-03 (workspace Mermaid + top-level index.md / architecture.md)
-- **Status:** Ready to execute 03-03
-- **Progress:** [■■■□] 2/4 phases complete + 2/3 plans of phase 3; build-all-api.sh 20/20 OK; aggregator strict build exits 0 with pre-rendered API pages for all 20 Python repos
+- **Phase:** 3 — Aggregator & API Strategy (all 3 waves complete)
+- **Plan:** 03-03 (e2e291f + 879f6fc + 18c6973 in cos-docs) complete; Phase 3 closed — AGGR-01..05, DIAG-03, API-02, API-03 all satisfied
+- **Status:** Ready for Phase 4 planning (Deploy & CI — DEPLOY-01..04, CI-01..03). Phase 2 plan 02-03 (per-repo content authoring) remains pending; independent of Phase 4 readiness.
+- **Progress:** [■■■□] Phase 3 complete; aggregator `mkdocs build --strict` exits 0 with 20/20 API pages populated + workspace Mermaid rendering + 29-row repo index landing page + 8-domain left-nav
 
 ## Performance Metrics
 
@@ -48,6 +50,7 @@ Plan: 2 of 3 — complete
 | 02-02 | 440 | 2 | 3 (cos-docs) + 1 (parent) + 9 (siblings) | 11 (d8cffe6, 83683eb, 4557877, c1b7072, 2835ccf, d6c8a03, a3d8591, 3b66154, 8a28715, 1a8d963, 7e6e2fc) |
 | 03-01 | 178 | 3 | 3 (cos-docs) | 2 cos-docs (d8b9027, eb1611d) + 4 siblings (5da13fe, a62d33f, 06defae, f4a0b51) |
 | 03-02 | 284 | 4 | 3 (cos-docs) + 2 (siblings, uncommitted per plan) | 3 cos-docs (5e174d1, 2a6c285, d519714) |
+| 03-03 | 225 | 3 | 1 created + 3 modified (cos-docs) | 3 cos-docs (e2e291f, 879f6fc, 18c6973) |
 
 ## Accumulated Context
 
@@ -110,9 +113,16 @@ Plan: 2 of 3 — complete
 - NO_DEPS_INSTALL map remains at 2 entries (COS-CIE, cos-signal-bridge) — no new empirical additions surfaced during Task 2.
 - md_in_html strips `markdown="0"` at render time but preserves the enclosing `<div class="cos-docs-prerendered-api" markdown="0">` tag verbatim — the class attribute is the durable passthrough proof (verified 20/20 in final aggregator `site/`).
 
+### Decisions From Plan 03-03
+
+- AGGR-03 + DIAG-03 closed: workspace Mermaid (flowchart LR, 8 domain subgraphs + 1 EXT context subgraph, exactly 6 critical data arrows per D-13) + 29-row repo index landing page + Architecture nav entry shipped; aggregator `mkdocs build --strict` exits 0 with Mermaid rendered as `<pre class="mermaid">` in `site/architecture/index.html`, 20/20 API pages populated, and all 8 domain labels present in left-nav.
+- Architecture page takes nav slot 2 (between Overview and Forges) so workspace orientation precedes any per-repo group.
+- Informational `<repo>/architecture/` link notes from MkDocs are INFO-level (not WARNING) and do not block `--strict`; non-blocking tidy-up available for Phase 4 if fully clean `--strict -v` output is desired.
+
 ### Open Decisions
 
 - **API-02**: RESOLVED by 03-02 (commit d519714 in cos-docs) — PROJECT.md Key Decision row "API-docs Strategy" added with full evidence trail.
+- **AGGR-03 / DIAG-03**: RESOLVED by 03-03 — workspace Mermaid + repo-index landing page shipped; Phase 3 fully closed.
 
 ### Todos
 
@@ -124,8 +134,8 @@ Plan: 2 of 3 — complete
 
 ## Session Continuity
 
-**Last session:** 2026-04-20T05:36:00.000Z
-**Next action:** Execute Plan 03-03 (workspace Mermaid data-flow diagram + top-level docs/index.md repo-index table + docs/architecture.md narrative) — the final Wave of Phase 3. build-all-api.sh is proven 20/20 OK and the aggregator strict-build exits 0 with real API pages. 03-03 adds the workspace-overview layer (AGGR-03, DIAG-03) on top of the now-populated nav.
+**Last session:** 2026-04-20T05:43:45.000Z
+**Next action:** Phase 3 complete. Next up — either Phase 4 planning (Deploy & CI: Dockerfile, Kustomize→Talos NodePort 30081, GitHub Actions nightly + on-push) or finish Phase 2 plan 02-03 (hand-author per-repo content across domain groups). Phase 4 has no hard dependency on 02-03; aggregator is deploy-ready with current 20/20 API pages + workspace-scale Mermaid.
 **Files in play:**
 
 - `.planning/PROJECT.md`
