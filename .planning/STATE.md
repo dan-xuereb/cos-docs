@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-04-20T12:37:29Z"
+last_updated: "2026-04-20T12:56:58Z"
 progress:
   total_phases: 4
   completed_phases: 2
   total_plans: 13
-  completed_plans: 9
-  percent: 69
+  completed_plans: 10
+  percent: 77
 # Note: Phase 3 complete (all 3 plans); Phase 2 still has 02-03 pending (content authoring).
 # total_plans excludes Phase 4 (not yet planned at plan-granularity).
 ---
@@ -27,12 +27,12 @@ progress:
 ## Current Position
 
 Phase: 4 (Deploy & CI) — IN PROGRESS
-Plan: 1 of 5 complete
+Plan: 2 of 5 complete
 
-- **Phase:** 4 — Deploy & CI (1/5 plans complete)
-- **Plan:** 04-01 (9f274b1 + 1efc7ad + 0cef9d6 in cos-docs) complete; DEPLOY-01 satisfied; DEPLOY-04 partially prepared (static-serving half proven locally, real URL reachability deferred to 04-05)
-- **Status:** 04-02 (Kustomize on `kubernetes` branch) unblocked. Phase 2 plan 02-03 (per-repo content authoring) remains pending; independent of Phase 4.
-- **Progress:** [■■■▣] Phase 4 underway; cos-docs/Dockerfile + deploy/nginx.conf + .dockerignore + .gitignore shipped and smoke-verified (docker build 3.4s, 4/4 curl assertions green against cos-docs:test image)
+- **Phase:** 4 — Deploy & CI (2/5 plans complete)
+- **Plan:** 04-02 (`1646909` on `kubernetes` branch + `6875e05` port-retarget on main) complete; DEPLOY-02 + DEPLOY-03 satisfied; DEPLOY-04 artifacts ready pending live apply in 04-05
+- **Status:** 04-03 (CI workflow: image build + push to 10.70.0.30:5000) unblocked. Phase 2 plan 02-03 (per-repo content authoring) remains pending; independent of Phase 4.
+- **Progress:** [■■■▣] Phase 4 underway; k8s/ Kustomize bundle (namespace + deployment + service + kustomization + README) committed on `kubernetes` branch, server-side dry-run PASSED, main branch verified k8s-free
 
 ## Performance Metrics
 
@@ -52,6 +52,7 @@ Plan: 1 of 5 complete
 | 03-02 | 284 | 4 | 3 (cos-docs) + 2 (siblings, uncommitted per plan) | 3 cos-docs (5e174d1, 2a6c285, d519714) |
 | 03-03 | 225 | 3 | 1 created + 3 modified (cos-docs) | 3 cos-docs (e2e291f, 879f6fc, 18c6973) |
 | 04-01 | 260 | 3 | 4 created (cos-docs: Dockerfile, deploy/nginx.conf, .dockerignore, .gitignore) | 3 cos-docs (9f274b1, 1efc7ad, 0cef9d6) |
+| 04-02 | 480 | 5 | 5 created (cos-docs kubernetes branch: k8s/namespace.yaml, k8s/deployment.yaml, k8s/service.yaml, k8s/kustomization.yaml, k8s/README.md) + 1 modified (04-02-PLAN.md on main) | 1 main (6875e05 port retarget) + 1 kubernetes (1646909 Kustomize bundle) |
 
 ## Accumulated Context
 
@@ -128,11 +129,22 @@ Plan: 1 of 5 complete
 - Smoke-test wrapper pattern: `set +e; trap restore EXIT` around build-all-api.sh --keep / mkdocs build / docker build, plus an early --restore before docker build. Guarantees sibling repos revert even on mid-pipeline abort. Same pattern recommended for Plan 04-04 CI workflow (keeps the on-disk workspace clean for the next run).
 - Build-context bound verified empirically: docker build transferred 31.48MB (vs. multi-GB if `/home/btc/github/` leaked in). `.dockerignore` is the only structural gate — it must not regress.
 
+### Decisions From Plan 04-02
+
+- NodePort retarget cascade: 30081 (held by pricefeed) → 30082 (held by xuer-operator) → **30083 (free, verified via live-cluster enumeration)**. Governance artifacts (REQUIREMENTS DEPLOY-02/DEPLOY-04, ROADMAP, 04-CONTEXT.md) updated pre-executor in commit fbc65b7; plan-only retarget in 6875e05.
+- `kubernetes` branch branched from `main` (not orphan) per D-08 — matches quant-dashboard workspace precedent. Dockerfile + mkdocs.yml inherited but unused for `kubectl apply -k`.
+- `commonLabels` retained in kustomization.yaml despite kustomize v5 deprecation warning — preserves plan fidelity and matches workspace precedent; deferred as tech-debt item for potential v6 migration.
+- No `imagePullSecrets` — registry 10.70.0.30:5000 is on the Talos containerd `insecure-registries` list (anonymous pull). `imagePullPolicy: Always` on `:latest` guarantees rollout-restart fetches fresh digests.
+- containerPort 8080 ↔ Dockerfile EXPOSE 8080 lockstep contract documented in `k8s/README.md` so cross-branch port changes cannot drift silently.
+- Server-side dry-run workflow: `kubectl apply -f namespace.yaml` → `kubectl apply -k k8s/ --dry-run=server` → `kubectl delete namespace cos-docs`. Bundle admission-validated clean against live Talos cluster.
+
 ### Open Decisions
 
 - **API-02**: RESOLVED by 03-02 (commit d519714 in cos-docs) — PROJECT.md Key Decision row "API-docs Strategy" added with full evidence trail.
 - **AGGR-03 / DIAG-03**: RESOLVED by 03-03 — workspace Mermaid + repo-index landing page shipped; Phase 3 fully closed.
 - **DEPLOY-01**: RESOLVED by 04-01 (9f274b1 + 1efc7ad + 0cef9d6) — Dockerfile + nginx.conf + .dockerignore shipped with 4/4 local curl smoke assertions green.
+- **DEPLOY-02 / DEPLOY-03**: RESOLVED by 04-02 (1646909 on `kubernetes` branch) — Kustomize bundle rendered and server-side dry-run PASSED; NodePort 30083 locked.
+- **DEPLOY-04 (partial)**: artifacts ready; actual `kubectl apply -k` + reachability curl deferred to 04-05.
 
 ### Todos
 
@@ -144,8 +156,8 @@ Plan: 1 of 5 complete
 
 ## Session Continuity
 
-**Last session:** 2026-04-20T12:37:29Z
-**Next action:** Phase 4 plan 04-01 complete. Next up: 04-02 (Kustomize manifests on `kubernetes` branch — namespace/deployment/service/kustomization, NodePort 30081, control-plane toleration, 1 replica). Dockerfile's container port is 8080; k8s deployment.yaml must set `containerPort: 8080` + service `targetPort: 8080` + `nodePort: 30081`. No blockers.
+**Last session:** 2026-04-20T12:56:58Z
+**Next action:** Phase 4 plan 04-02 complete (kubernetes branch + Kustomize bundle @ 1646909; main @ 6875e05 for NodePort 30083 retarget). Next up: 04-03 (CI workflow: build image in GitHub Actions, push to 10.70.0.30:5000/cos-docs:<tag>, optional rollout-restart trigger). No blockers.
 **Files in play:**
 
 - `.planning/PROJECT.md`

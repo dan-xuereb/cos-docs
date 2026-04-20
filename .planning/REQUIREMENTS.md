@@ -42,8 +42,8 @@
 ### Deploy
 
 - [x] **DEPLOY-01**: A multi-stage `Dockerfile` builds the static site in one stage and serves it from nginx in a runtime stage (04-01; FROM nginx:1.27-alpine AS runtime, COPY site/ + site-manifest.json + deploy/nginx.conf, USER 101, HEALTHCHECK /health, local smoke build 3.4s / 111MB image / 31MB context)
-- [ ] **DEPLOY-02**: A Kustomize bundle in `cos-docs/k8s/` deploys the container to the Talos cluster at `10.70.0.102` with NodePort 30083 (amended 2026-04-20 from 30081 — pricefeed already holds 30081)
-- [ ] **DEPLOY-03**: The deployment tolerates the `control-plane` taint (single-node cluster) and uses the private registry `10.70.0.30:5000`
+- [x] **DEPLOY-02**: A Kustomize bundle in `cos-docs/k8s/` deploys the container to the Talos cluster at `10.70.0.102` with NodePort 30083 (04-02; 1646909 on kubernetes branch — namespace.yaml + deployment.yaml + service.yaml + kustomization.yaml + README.md; server-side dry-run PASSED; NodePort 30083 amended 2026-04-20 from 30081/30082 after preflight collisions with pricefeed/xuer-operator)
+- [x] **DEPLOY-03**: The deployment tolerates the `control-plane` taint (single-node cluster) and uses the private registry `10.70.0.30:5000` (04-02; tolerations block in deployment.yaml + image reference 10.70.0.30:5000/cos-docs:latest with imagePullPolicy Always; no imagePullSecrets — registry on containerd insecure-registries list)
 - [ ] **DEPLOY-04**: The site is reachable at `http://10.70.0.102:30083/` after a successful deploy
 
 ### CI
@@ -100,8 +100,8 @@
 | API-02 | Phase 3 | Complete (03-02) |
 | API-03 | Phase 3 | Complete (03-02) |
 | DEPLOY-01 | Phase 4 | Complete (04-01) |
-| DEPLOY-02 | Phase 4 | Pending |
-| DEPLOY-03 | Phase 4 | Pending |
+| DEPLOY-02 | Phase 4 | Complete (04-02) |
+| DEPLOY-03 | Phase 4 | Complete (04-02) |
 | DEPLOY-04 | Phase 4 | Pending |
 | CI-01 | Phase 4 | Pending |
 | CI-02 | Phase 4 | Pending |
