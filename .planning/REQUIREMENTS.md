@@ -42,9 +42,9 @@
 ### Deploy
 
 - [x] **DEPLOY-01**: A multi-stage `Dockerfile` builds the static site in one stage and serves it from nginx in a runtime stage (04-01; FROM nginx:1.27-alpine AS runtime, COPY site/ + site-manifest.json + deploy/nginx.conf, USER 101, HEALTHCHECK /health, local smoke build 3.4s / 111MB image / 31MB context)
-- [ ] **DEPLOY-02**: A Kustomize bundle in `cos-docs/k8s/` deploys the container to the Talos cluster at `10.70.0.102` with NodePort 30081
+- [ ] **DEPLOY-02**: A Kustomize bundle in `cos-docs/k8s/` deploys the container to the Talos cluster at `10.70.0.102` with NodePort 30082 (amended 2026-04-20 from 30081 — pricefeed already holds 30081)
 - [ ] **DEPLOY-03**: The deployment tolerates the `control-plane` taint (single-node cluster) and uses the private registry `10.70.0.30:5000`
-- [ ] **DEPLOY-04**: The site is reachable at `http://10.70.0.102:30081/` after a successful deploy
+- [ ] **DEPLOY-04**: The site is reachable at `http://10.70.0.102:30082/` after a successful deploy
 
 ### CI
 

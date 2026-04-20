@@ -9,7 +9,7 @@
 - [ ] **Phase 1: Scaffold & Template** — Build the per-repo doc scaffold tool and pinned template that downstream content depends on
 - [ ] **Phase 2: Content Migration** — Scaffold all ~25 sibling repos and migrate README/CLAUDE.md content into the per-repo docs trees
 - [x] **Phase 3: Aggregator & API Strategy** — Compose all repos via mkdocs-monorepo-plugin, decide and implement the API-docs strategy, ship the workspace-wide diagram ✓ 2026-04-20
-- [ ] **Phase 4: Deploy & CI** — Containerize, deploy to Talos NodePort 30081, automate nightly + on-push rebuilds
+- [ ] **Phase 4: Deploy & CI** — Containerize, deploy to Talos NodePort 30082, automate nightly + on-push rebuilds
 
 ## Phase Details
 
@@ -61,21 +61,21 @@ Plans:
 - [x] 03-03-PLAN.md — Workspace Mermaid + full index.md + Architecture nav + final end-to-end strict-build (AGGR-03, DIAG-03) ✓ 2026-04-20 (e2e291f, 879f6fc, 18c6973)
 
 ### Phase 4: Deploy & CI
-**Goal**: The aggregated site is reachable at `http://10.70.0.102:30081/` from a containerized deploy on Talos, and a GitHub Actions workflow rebuilds it nightly, on push to `main`, and on manual dispatch.
+**Goal**: The aggregated site is reachable at `http://10.70.0.102:30082/` from a containerized deploy on Talos, and a GitHub Actions workflow rebuilds it nightly, on push to `main`, and on manual dispatch. *(NodePort amended from 30081 → 30082 on 2026-04-20; 30081 is held by pricefeed.)*
 **Depends on**: Phase 3
 **Requirements**: DEPLOY-01, DEPLOY-02, DEPLOY-03, DEPLOY-04, CI-01, CI-02, CI-03
 **Success Criteria** (what must be TRUE):
   1. A multi-stage `Dockerfile` in `cos-docs/` builds the static site and serves it from nginx, producing a runnable image
   2. `kubectl apply -k cos-docs/k8s/` deploys the site to the Talos cluster with a `control-plane` taint toleration, pulling from the private registry `10.70.0.30:5000`
-  3. `curl http://10.70.0.102:30081/` returns the rendered aggregator landing page with HTTP 200
+  3. `curl http://10.70.0.102:30082/` returns the rendered aggregator landing page with HTTP 200
   4. A GitHub Actions workflow runs on nightly schedule, on push to `main`, and on `workflow_dispatch`, and produces a deployable image (or pushes to the private registry)
 **Plans:** 5 plans
 Plans:
 - [x] 04-01-PLAN.md — Multi-stage Dockerfile + nginx.conf + .dockerignore; local smoke-test image serves pre-built site/ (DEPLOY-01, DEPLOY-04) ✓ 2026-04-20 (9f274b1, 1efc7ad, 0cef9d6)
-- [ ] 04-02-PLAN.md — `kubernetes` branch (from main) + Kustomize bundle: namespace/deployment/service/kustomization, NodePort 30081, control-plane toleration, 1 replica (DEPLOY-02, DEPLOY-03, DEPLOY-04)
+- [ ] 04-02-PLAN.md — `kubernetes` branch (from main) + Kustomize bundle: namespace/deployment/service/kustomization, NodePort 30082, control-plane toleration, 1 replica (DEPLOY-02, DEPLOY-03, DEPLOY-04)
 - [ ] 04-03-PLAN.md — Self-hosted runner install script (scripted `gh api`) + emit-site-manifest.sh + RUNNER-SETUP runbook (CI-01, CI-02, CI-03)
 - [ ] 04-04-PLAN.md — `.github/workflows/build.yml`: nightly + push + dispatch, in-place git sync (no actions/checkout), build-all-api --keep, strict-fail gate + allow_partial, if:always() restore, multi-tag push, rollout hint (CI-01, CI-02, CI-03, DEPLOY-01)
-- [ ] 04-05-PLAN.md — End-to-end deploy verification: kubectl apply -k, curl assertions at 10.70.0.102:30081, DEPLOY-VERIFICATION.md transcript (DEPLOY-02, DEPLOY-03, DEPLOY-04)
+- [ ] 04-05-PLAN.md — End-to-end deploy verification: kubectl apply -k, curl assertions at 10.70.0.102:30082, DEPLOY-VERIFICATION.md transcript (DEPLOY-02, DEPLOY-03, DEPLOY-04)
 
 ## Progress
 
