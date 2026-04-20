@@ -60,10 +60,11 @@ done
 # 3. gh auth status
 gh auth status >/dev/null 2>&1 || die "gh CLI not authenticated; run: gh auth login"
 
-# 4. gh must have admin:repo_hook scope (required for
-#    /repos/{owner}/{repo}/actions/runners/registration-token endpoint)
-if ! gh auth status 2>&1 | grep -q "admin:repo_hook"; then
-    die "gh token missing 'admin:repo_hook' scope; run: gh auth refresh -s admin:repo_hook"
+# 4. gh must have `repo` scope (sufficient for
+#    /repos/{owner}/{repo}/actions/runners/registration-token endpoint per
+#    https://docs.github.com/rest/actions/self-hosted-runners)
+if ! gh auth status 2>&1 | grep -qE "[[:space:]]'repo'([,]|$)"; then
+    die "gh token missing 'repo' scope; run: gh auth refresh -s repo"
 fi
 
 # 5. workspace must exist (the runner expects to work against it)
