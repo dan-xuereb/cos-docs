@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-04-20T05:43:45.000Z"
+last_updated: "2026-04-20T12:37:29Z"
 progress:
   total_phases: 4
   completed_phases: 2
-  total_plans: 8
-  completed_plans: 8
-  percent: 88
+  total_plans: 13
+  completed_plans: 9
+  percent: 69
 # Note: Phase 3 complete (all 3 plans); Phase 2 still has 02-03 pending (content authoring).
 # total_plans excludes Phase 4 (not yet planned at plan-granularity).
 ---
@@ -26,13 +26,13 @@ progress:
 
 ## Current Position
 
-Phase: 3 (Aggregator & API Strategy) — COMPLETE
-Plan: 3 of 3 — complete
+Phase: 4 (Deploy & CI) — IN PROGRESS
+Plan: 1 of 5 complete
 
-- **Phase:** 3 — Aggregator & API Strategy (all 3 waves complete)
-- **Plan:** 03-03 (e2e291f + 879f6fc + 18c6973 in cos-docs) complete; Phase 3 closed — AGGR-01..05, DIAG-03, API-02, API-03 all satisfied
-- **Status:** Ready for Phase 4 planning (Deploy & CI — DEPLOY-01..04, CI-01..03). Phase 2 plan 02-03 (per-repo content authoring) remains pending; independent of Phase 4 readiness.
-- **Progress:** [■■■□] Phase 3 complete; aggregator `mkdocs build --strict` exits 0 with 20/20 API pages populated + workspace Mermaid rendering + 29-row repo index landing page + 8-domain left-nav
+- **Phase:** 4 — Deploy & CI (1/5 plans complete)
+- **Plan:** 04-01 (9f274b1 + 1efc7ad + 0cef9d6 in cos-docs) complete; DEPLOY-01 satisfied; DEPLOY-04 partially prepared (static-serving half proven locally, real URL reachability deferred to 04-05)
+- **Status:** 04-02 (Kustomize on `kubernetes` branch) unblocked. Phase 2 plan 02-03 (per-repo content authoring) remains pending; independent of Phase 4.
+- **Progress:** [■■■▣] Phase 4 underway; cos-docs/Dockerfile + deploy/nginx.conf + .dockerignore + .gitignore shipped and smoke-verified (docker build 3.4s, 4/4 curl assertions green against cos-docs:test image)
 
 ## Performance Metrics
 
@@ -51,6 +51,7 @@ Plan: 3 of 3 — complete
 | 03-01 | 178 | 3 | 3 (cos-docs) | 2 cos-docs (d8b9027, eb1611d) + 4 siblings (5da13fe, a62d33f, 06defae, f4a0b51) |
 | 03-02 | 284 | 4 | 3 (cos-docs) + 2 (siblings, uncommitted per plan) | 3 cos-docs (5e174d1, 2a6c285, d519714) |
 | 03-03 | 225 | 3 | 1 created + 3 modified (cos-docs) | 3 cos-docs (e2e291f, 879f6fc, 18c6973) |
+| 04-01 | 260 | 3 | 4 created (cos-docs: Dockerfile, deploy/nginx.conf, .dockerignore, .gitignore) | 3 cos-docs (9f274b1, 1efc7ad, 0cef9d6) |
 
 ## Accumulated Context
 
@@ -119,10 +120,19 @@ Plan: 3 of 3 — complete
 - Architecture page takes nav slot 2 (between Overview and Forges) so workspace orientation precedes any per-repo group.
 - Informational `<repo>/architecture/` link notes from MkDocs are INFO-level (not WARNING) and do not block `--strict`; non-blocking tidy-up available for Phase 4 if fully clean `--strict -v` output is desired.
 
+### Decisions From Plan 04-01
+
+- Multi-stage label (`FROM nginx:1.27-alpine AS runtime`) retained for workspace convention even though there is no separate builder stage — site/ is built outside Docker on the runner filesystem (RESEARCH §4 Pitfall 2). Preserves option to add a future transform stage without restructuring.
+- cos-docs's first `.gitignore` introduced to block site/, site-manifest.json, .venv-aggr-local/, .venv-agg/ — before this commit the repo had no gitignore at all, so smoke-test artifacts were only safe by convention.
+- Dropped `text/html` from nginx gzip_types (Rule 1 fix): base nginx config already includes it and duplicating emits a warning on every startup. Behavior unchanged; log bar is now clean.
+- Smoke-test wrapper pattern: `set +e; trap restore EXIT` around build-all-api.sh --keep / mkdocs build / docker build, plus an early --restore before docker build. Guarantees sibling repos revert even on mid-pipeline abort. Same pattern recommended for Plan 04-04 CI workflow (keeps the on-disk workspace clean for the next run).
+- Build-context bound verified empirically: docker build transferred 31.48MB (vs. multi-GB if `/home/btc/github/` leaked in). `.dockerignore` is the only structural gate — it must not regress.
+
 ### Open Decisions
 
 - **API-02**: RESOLVED by 03-02 (commit d519714 in cos-docs) — PROJECT.md Key Decision row "API-docs Strategy" added with full evidence trail.
 - **AGGR-03 / DIAG-03**: RESOLVED by 03-03 — workspace Mermaid + repo-index landing page shipped; Phase 3 fully closed.
+- **DEPLOY-01**: RESOLVED by 04-01 (9f274b1 + 1efc7ad + 0cef9d6) — Dockerfile + nginx.conf + .dockerignore shipped with 4/4 local curl smoke assertions green.
 
 ### Todos
 
@@ -134,8 +144,8 @@ Plan: 3 of 3 — complete
 
 ## Session Continuity
 
-**Last session:** 2026-04-20T05:43:45.000Z
-**Next action:** Phase 3 complete. Next up — either Phase 4 planning (Deploy & CI: Dockerfile, Kustomize→Talos NodePort 30081, GitHub Actions nightly + on-push) or finish Phase 2 plan 02-03 (hand-author per-repo content across domain groups). Phase 4 has no hard dependency on 02-03; aggregator is deploy-ready with current 20/20 API pages + workspace-scale Mermaid.
+**Last session:** 2026-04-20T12:37:29Z
+**Next action:** Phase 4 plan 04-01 complete. Next up: 04-02 (Kustomize manifests on `kubernetes` branch — namespace/deployment/service/kustomization, NodePort 30081, control-plane toleration, 1 replica). Dockerfile's container port is 8080; k8s deployment.yaml must set `containerPort: 8080` + service `targetPort: 8080` + `nodePort: 30081`. No blockers.
 **Files in play:**
 
 - `.planning/PROJECT.md`
