@@ -581,22 +581,25 @@ flowchart LR
 
 **If this table seems sparse:** The hard facts (plugin behavior, version pins, pre-render necessity) are verified or cited. Assumptions concentrate on (a) HTML parsing heuristics and (b) two edge-case repo states. Planner should turn A1, A3, A5 into explicit verification tasks.
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Should pre-rendered `docs/api.md` be checked into each sibling repo's git, or kept as a transient build artifact?**
    - What we know: D-03 says "Phase 4 replaces the loop with a CI matrix" — CI pipelines prefer ephemeral artifacts. But committing the rendered markdown gives clean `git diff` review of API changes.
    - What's unclear: Whether the user wants API drift to show up as sibling-repo commits (useful for review, noisy for velocity).
    - Recommendation: **Keep transient** (`build-all-api.sh` swaps in-place, aggregator build runs, then restores original declarative `docs/api.md`). Matches D-03 "CI drop-in" intent and keeps per-repo git history focused on code, not rendered artifacts. Surface to user in plan 03-02 Wave 0.
+   - **RESOLVED:** Plan 03-02 Task 1 — `build-all-api.sh` ships with `--keep`/`--restore` modes; per-repo `docs/api.md` stays declarative in git, pre-rendered form is transient.
 
 2. **Does D-18 "no EXCLUDE list" apply to BTC-Forge / COS-MSE given their FAIL status is pre-existing source content?**
    - What we know: D-17 is zero-tolerance `--strict`; D-18 says every non-locked-excluded repo must be strict-clean.
    - What's unclear: User intent on 2 FAIL repos — fix inline, defer to owners, or temporarily EXCLUDE?
    - Recommendation: **Fix inline in plan 03-02** (small 1-5 line changes per `02-ROLLOUT-STATUS.md`). Only escalate if fix proves harder than expected.
+   - **RESOLVED:** Plan 03-02 Task 0 — BTC-Forge + COS-MSE source-content fixes applied inline (1-5 line changes per `02-ROLLOUT-STATUS.md`); no EXCLUDE list needed.
 
 3. **Does the aggregator need its own `.gitignore` entry for the 25 per-repo `.api-staging/` dirs?**
    - What we know: Each repo's own `.gitignore` should carry it. But `scaffold.sh` doesn't emit `.gitignore` entries.
    - What's unclear: Whether Phase 3 should amend `scaffold.sh` (Phase 1 territory) or emit a one-time per-repo `.gitignore` patch.
    - Recommendation: Plan 03-02 adds a small preflight task that writes `.venv-docs\n.api-staging\nsite/\n` to each repo's `.gitignore` (idempotent append-if-missing). No `scaffold.sh` contract change needed.
+   - **RESOLVED:** Plan 03-02 Task 1 — preflight task `append_gitignore_if_missing` writes `.venv-docs`, `.api-staging`, `site/` into each repo's `.gitignore` idempotently.
 
 ## Environment Availability
 
