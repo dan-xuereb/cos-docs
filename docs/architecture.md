@@ -2,7 +2,7 @@
 
 ## Overview
 
-The COS / Xuer Capital stack is an 8-domain quantitative-finance platform
+The COS / Xuer Labs stack is an 8-domain quantitative-finance platform
 spanning data ingestion, signal composition, backtesting, on-chain analytics,
 agent reasoning, and live-trading presentation. Each repo is an independent
 git repo under `/home/btc/github/`; the aggregator composes their `docs/` via

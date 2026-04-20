@@ -1,6 +1,6 @@
-site_name: Xuer Capital Workspace Docs
+site_name: Xuer Labs Workspace Docs
 site_url: http://10.70.0.102:30081/
-site_description: COS / Xuer Capital workspace documentation aggregator
+site_description: COS / Xuer Labs workspace documentation aggregator
 
 # Aggregator for 29 sibling repos under /home/btc/github/. Each repo
 # remains an independent git repo with its own docs/ tree and mkdocs.yml;

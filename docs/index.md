@@ -1,6 +1,6 @@
-# Xuer Capital Workspace Docs
+# Xuer Labs Workspace Docs
 
-> Single entry-point to every COS / Xuer Capital repo's architecture, API,
+> Single entry-point to every COS / Xuer Labs repo's architecture, API,
 > and diagrams. Built from ~29 sibling repos under `/home/btc/github/`
 > via [mkdocs-monorepo-plugin](https://backstage.github.io/mkdocs-monorepo-plugin/).
 
@@ -61,7 +61,7 @@ See [Workspace Architecture](architecture.md) for the workspace-wide data-flow d
 
 | Repo | Language | Purpose |
 |------|----------|---------|
-| [cos-webpage](cos-webpage/) | TS (Next.js) | Xuer Capital institutional landing page |
+| [cos-webpage](cos-webpage/) | TS (Next.js) | Xuer Labs institutional landing page |
 | [quant-dashboard](quant-dashboard/) | TS / React | Bloomberg-style trading dashboard |
 
 ### Warehouse — on-chain ETL + full-node deploy
