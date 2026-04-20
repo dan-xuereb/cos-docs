@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: executing
-last_updated: "2026-04-19T19:45:24.000Z"
+status: Rollout sweep executed. 9 OK / 2 FAIL / 19 SKIP (with remediation). Tooling correct; gap is workspace hygiene. Ready for plan 02-03.
+last_updated: "2026-04-20T04:49:30.163Z"
 progress:
   total_phases: 4
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 5
-  completed_plans: 4
-  percent: 45
+  completed_plans: 5
+  percent: 100
 ---
 
 # State: cos-docs
@@ -107,7 +107,7 @@ Plan: 2 of 3 — complete
 
 ## Session Continuity
 
-**Last session:** 2026-04-19 — Executed plan 02-02 (rollout sweep). Commits: d8cffe6 (cos-docs: scaffold-all.sh PACKAGE_OVERRIDES backport + REQUIREMENTS.md DIAG-02 amendment + 02-ROLLOUT-STATUS.md), 83683eb (parent /home/btc/github: CLAUDE.md project map reconciliation), plus 9 sibling-repo `docs: add cos-docs scaffold (content to follow)` commits. Final counts: 9 OK (3 initial + 6 via PACKAGE_OVERRIDES), 2 FAIL (COS-Infra/COS-Network scaffold template bug), 19 SKIP (2 excluded + 4 non-main branches + 13 dirty trees). 7 empirical PACKAGE_OVERRIDES backported. Workspace-dep install fallback (`pip install --no-deps -e .`) applied manually to COS-CIE and cos-signal-bridge. Plan target ≥25 OK not met (9 OK) — gap is workspace hygiene awaiting user triage; tooling itself is correct. All 30 repos have rows in 02-ROLLOUT-STATUS.md per CONT-01.
+**Last session:** 2026-04-20T04:49:30.160Z
 **Next action:** Per-repo triage (user): clean 13 dirty trees, checkout main on 4 kubernetes branches, then re-run `scaffold.sh /path/to/repo` per-repo. Separately, execute Phase 2 wave 3 — plan 02-03 (per-repo content authoring). Consider scoping a scaffold.sh template-bug fix (emit_index_md repo_type awareness) and a `NO_DEPS_INSTALL` wrapper enhancement as follow-up work.
 **Files in play:**
 
