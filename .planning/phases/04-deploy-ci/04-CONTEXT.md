@@ -8,14 +8,14 @@ created: 2026-04-20
 
 ## Phase Goal (from ROADMAP.md)
 
-The aggregated site is reachable at `http://10.70.0.102:30082/` from a containerized deploy on Talos, and a GitHub Actions workflow rebuilds it nightly, on push to `main`, and on manual dispatch.
+The aggregated site is reachable at `http://10.70.0.102:30083/` from a containerized deploy on Talos, and a GitHub Actions workflow rebuilds it nightly, on push to `main`, and on manual dispatch.
 
 ## Requirements Locked (from REQUIREMENTS.md)
 
 - **DEPLOY-01** — Multi-stage Dockerfile (build stage + nginx runtime stage)
-- **DEPLOY-02** — Kustomize bundle in `cos-docs/k8s/`, NodePort 30082 on Talos 10.70.0.102
+- **DEPLOY-02** — Kustomize bundle in `cos-docs/k8s/`, NodePort 30083 on Talos 10.70.0.102
 - **DEPLOY-03** — Control-plane taint toleration, private registry `10.70.0.30:5000`
-- **DEPLOY-04** — Site reachable at `http://10.70.0.102:30082/`
+- **DEPLOY-04** — Site reachable at `http://10.70.0.102:30083/`
 - **CI-01** — Nightly rebuild
 - **CI-02** — On push to `main` + `workflow_dispatch`
 - **CI-03** — Push built image to private registry (or produce deployable artifact)
@@ -59,9 +59,9 @@ CI exits non-zero if any of the 20 Python siblings fails pre-render or if aggreg
 - `resources.limits`: `cpu: 200m, memory: 256Mi`
 - Tolerates `node-role.kubernetes.io/control-plane` taint (single-node cluster)
 - Manifests live on a dedicated `kubernetes` branch of `cos-docs`, per workspace convention documented in CLAUDE.md / `KUBERNETES_BRANCHES_SUMMARY.md`
-- **Manifest set (expected):** `namespace.yaml`, `deployment.yaml`, `service.yaml` (NodePort **30082**), `kustomization.yaml`
+- **Manifest set (expected):** `namespace.yaml`, `deployment.yaml`, `service.yaml` (NodePort **30083**), `kustomization.yaml`
 - **Namespace:** `cos-docs`
-- **Amendment 2026-04-20:** NodePort changed from `30081` → `30082`. Preflight during plan 04-02 discovered `pricefeed/pricefeed-external` holds 30081 (45d uptime). Option 1 taken: move cos-docs to 30082, don't disturb pricefeed. ROADMAP Phase 4 success criterion and REQUIREMENTS DEPLOY-02/DEPLOY-04 amended in parallel.
+- **Amendment 2026-04-20:** NodePort changed from `30081` → `30083`. Preflight during plan 04-02 discovered `pricefeed/pricefeed-external` holds 30081 (45d uptime). Option 1 taken: move cos-docs to 30083, don't disturb pricefeed. ROADMAP Phase 4 success criterion and REQUIREMENTS DEPLOY-02/DEPLOY-04 amended in parallel.
 - **Rationale:** HPA 2-10 fits user-facing apps (quant-dashboard). Internal docs don't need it. `kubernetes` branch separation keeps `main` infra-free and matches all 25+ sibling repos.
 - **Implication for planner:** Dedicated plan for initial `kubernetes` branch creation + K8s manifest authoring. Manifests are NOT on `main`.
 
@@ -100,5 +100,5 @@ CI produces and pushes the image. Deploy is manual via `kubectl rollout restart 
 
 1. Multi-stage `Dockerfile` in `cos-docs/` builds static site → nginx image
 2. `kubectl apply -k cos-docs/k8s/` deploys to Talos with control-plane toleration + private registry pull
-3. `curl http://10.70.0.102:30082/` returns rendered aggregator landing page (HTTP 200)
+3. `curl http://10.70.0.102:30083/` returns rendered aggregator landing page (HTTP 200)
 4. GHA workflow runs on nightly + push-to-main + `workflow_dispatch`, produces deployable image in registry
