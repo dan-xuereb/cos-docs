@@ -21,11 +21,11 @@
 
 ### Aggregator
 
-- [ ] **AGGR-01**: The aggregator `mkdocs.yml` in `cos-docs/` uses `mkdocs-monorepo-plugin` with `!include ../<repo>/mkdocs.yml` entries for all 25 repos
-- [ ] **AGGR-02**: Aggregator navigation groups repos by domain: Forges, Signal Stack, Agent, Presentation, Warehouse, Network, Schema, Infrastructure
+- [x] **AGGR-01**: The aggregator `mkdocs.yml` in `cos-docs/` uses `mkdocs-monorepo-plugin` with `!include ../<repo>/mkdocs.yml` entries for all 25 repos (29 in final count; 03-01)
+- [x] **AGGR-02**: Aggregator navigation groups repos by domain: Forges, Signal Stack, Agent, Presentation, Warehouse, Network, Schema, Infrastructure (03-01)
 - [ ] **AGGR-03**: Aggregator includes a top-level `docs/index.md` workspace overview and a top-level `docs/architecture.md` with a workspace-wide Mermaid data-flow diagram
-- [ ] **AGGR-04**: `mkdocs build` from `cos-docs/` produces a complete static site with no broken `!include` references and no missing-anchor warnings
-- [ ] **AGGR-05**: Material default search (lunr) works across all aggregated content with no extra plugin
+- [x] **AGGR-04**: `mkdocs build` from `cos-docs/` produces a complete static site with no broken `!include` references and no missing-anchor warnings (03-01 strict-build exit 0)
+- [x] **AGGR-05**: Material default search (lunr) works across all aggregated content with no extra plugin (03-01; `search` plugin active)
 
 ### Diagrams
 
@@ -91,11 +91,11 @@
 | CONT-03 | Phase 2 | Pending |
 | CONT-04 | Phase 2 | Pending |
 | DIAG-02 | Phase 2 | Pending |
-| AGGR-01 | Phase 3 | Pending |
-| AGGR-02 | Phase 3 | Pending |
+| AGGR-01 | Phase 3 | Complete (03-01) |
+| AGGR-02 | Phase 3 | Complete (03-01) |
 | AGGR-03 | Phase 3 | Pending |
-| AGGR-04 | Phase 3 | Pending |
-| AGGR-05 | Phase 3 | Pending |
+| AGGR-04 | Phase 3 | Complete (03-01) |
+| AGGR-05 | Phase 3 | Complete (03-01) |
 | DIAG-03 | Phase 3 | Pending |
 | API-02 | Phase 3 | Pending |
 | API-03 | Phase 3 | Pending |
