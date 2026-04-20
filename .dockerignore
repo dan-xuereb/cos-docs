@@ -1,0 +1,20 @@
+# cos-docs/.dockerignore — keep Docker build context minimal.
+# The site/ tree is produced OUTSIDE the Docker build (by the CI workflow)
+# and is the ONLY content the image needs. See RESEARCH §4 Pitfall 2.
+
+.git
+.gitignore
+.github
+.planning
+.venv*
+__pycache__
+*.pyc
+*.pyo
+docs/
+mkdocs.yml
+scripts/
+requirements-docs.txt
+.build-all-api-status.md
+tests/
+README.md
+# Explicitly allow (override above with ! lines only if needed; here nothing is needed):
