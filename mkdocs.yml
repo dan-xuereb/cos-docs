@@ -1,0 +1,81 @@
+site_name: Xuer Capital Workspace Docs
+site_url: http://10.70.0.102:30081/
+site_description: COS / Xuer Capital workspace documentation aggregator
+
+# Aggregator for 29 sibling repos under /home/btc/github/. Each repo
+# remains an independent git repo with its own docs/ tree and mkdocs.yml;
+# mkdocs-monorepo-plugin composes them via !include at build time.
+#
+# IMPORTANT: child plugins: blocks are NOT executed by this aggregator build
+# (upstream mkdocs-monorepo-plugin issue #73). Per-repo API rendering runs
+# only in per-repo .venv-docs under scripts/build-all-api.sh (Plan 03-02).
+# That script pre-renders each Python repo's API page into an HTML
+# passthrough before this aggregator build consumes the result.
+
+theme:
+  name: material
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - navigation.expand
+    - content.code.copy
+    - search.suggest
+  palette:
+    - scheme: default
+    - scheme: slate
+
+plugins:
+  - search
+  - monorepo
+  # API-rendering plugin intentionally NOT loaded at aggregator level — see note above.
+
+markdown_extensions:
+  - admonition
+  - md_in_html
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+nav:
+  - Overview: index.md
+  - Forges:
+      - bis-forge: '!include ../bis-forge/mkdocs.yml'
+      - bls-forge: '!include ../bls-forge/mkdocs.yml'
+      - BTC-Forge: '!include ../BTC-Forge/mkdocs.yml'
+      - EDGAR-Forge: '!include ../EDGAR-Forge/mkdocs.yml'
+      - FRED-Forge: '!include ../FRED-Forge/mkdocs.yml'
+      - imf-forge: '!include ../imf-forge/mkdocs.yml'
+      - ingest: '!include ../ingest/mkdocs.yml'
+      - stooq-forge: '!include ../stooq-forge/mkdocs.yml'
+  - Signal Stack:
+      - COS-BTE: '!include ../COS-BTE/mkdocs.yml'
+      - COS-CIE: '!include ../COS-CIE/mkdocs.yml'
+      - COS-MSE: '!include ../COS-MSE/mkdocs.yml'
+      - COS-SGL: '!include ../COS-SGL/mkdocs.yml'
+      - cos-signal-bridge: '!include ../cos-signal-bridge/mkdocs.yml'
+      - cos-signal-explorer: '!include ../cos-signal-explorer/mkdocs.yml'
+  - Agent:
+      - COS-Bitcoin-Protocol-Intelligence-Platform: '!include ../COS-Bitcoin-Protocol-Intelligence-Platform/mkdocs.yml'
+      - COS-LangGraph: '!include ../COS-LangGraph/mkdocs.yml'
+  - Presentation:
+      - cos-webpage: '!include ../cos-webpage/mkdocs.yml'
+      - quant-dashboard: '!include ../quant-dashboard/mkdocs.yml'
+  - Warehouse:
+      - coinbase_websocket_BTC_pricefeed: '!include ../coinbase_websocket_BTC_pricefeed/mkdocs.yml'
+      - COS-BTC-Node: '!include ../COS-BTC-Node/mkdocs.yml'
+      - COS-BTC-SQL-Warehouse: '!include ../COS-BTC-SQL-Warehouse/mkdocs.yml'
+  - Network:
+      - COS-BTC-Network-Crawler: '!include ../COS-BTC-Network-Crawler/mkdocs.yml'
+      - OrbWeaver: '!include ../OrbWeaver/mkdocs.yml'
+  - Schema:
+      - COS-Core: '!include ../COS-Core/mkdocs.yml'
+      - cos-data-access: '!include ../cos-data-access/mkdocs.yml'
+  - Infrastructure:
+      - COS-Capability-Gated-Agent-Architecture: '!include ../COS-Capability-Gated-Agent-Architecture/mkdocs.yml'
+      - COS-Hardware: '!include ../COS-Hardware/mkdocs.yml'
+      - COS-Infra: '!include ../COS-Infra/mkdocs.yml'
+      - COS-Network: '!include ../COS-Network/mkdocs.yml'
