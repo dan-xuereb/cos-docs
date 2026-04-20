@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-04-20T12:56:58Z"
+last_updated: "2026-04-20T14:50:00Z"
 progress:
   total_phases: 4
   completed_phases: 2
   total_plans: 13
-  completed_plans: 10
-  percent: 77
+  completed_plans: 11
+  percent: 85
 # Note: Phase 3 complete (all 3 plans); Phase 2 still has 02-03 pending (content authoring).
 # total_plans excludes Phase 4 (not yet planned at plan-granularity).
 ---
@@ -27,12 +27,12 @@ progress:
 ## Current Position
 
 Phase: 4 (Deploy & CI) — IN PROGRESS
-Plan: 2 of 5 complete
+Plan: 3 of 5 complete
 
-- **Phase:** 4 — Deploy & CI (2/5 plans complete)
-- **Plan:** 04-02 (`1646909` on `kubernetes` branch + `6875e05` port-retarget on main) complete; DEPLOY-02 + DEPLOY-03 satisfied; DEPLOY-04 artifacts ready pending live apply in 04-05
-- **Status:** 04-03 (CI workflow: image build + push to 10.70.0.30:5000) unblocked. Phase 2 plan 02-03 (per-repo content authoring) remains pending; independent of Phase 4.
-- **Progress:** [■■■▣] Phase 4 underway; k8s/ Kustomize bundle (namespace + deployment + service + kustomization + README) committed on `kubernetes` branch, server-side dry-run PASSED, main branch verified k8s-free
+- **Phase:** 4 — Deploy & CI (3/5 plans complete)
+- **Plan:** 04-03 (`acc1d7b` + `040926e` + `3c9daa9` on main) complete; self-hosted runner `talos-cos-docs` live (systemd `active`, Idle at github.com/dan-xuereb/cos-docs) with labels `self-hosted,cos-docs,talos`; `scripts/emit-site-manifest.sh` + `scripts/install-runner.sh` + `RUNNER-SETUP.md` shipped. CI-01/02/03 infra landed; satisfaction pending 04-04 workflow + 04-05 E2E.
+- **Status:** 04-04 (`.github/workflows/build.yml`) unblocked — runner ready to accept jobs targeting `runs-on: self-hosted`. Phase 2 plan 02-03 (per-repo content authoring) remains pending; independent of Phase 4.
+- **Progress:** [■■■■] Phase 4 underway; runner registered + systemd unit active, emit-site-manifest.sh verified (31 repos, 40-hex cos_docs_sha, ISO-8601 timestamp).
 
 ## Performance Metrics
 
@@ -53,6 +53,7 @@ Plan: 2 of 5 complete
 | 03-03 | 225 | 3 | 1 created + 3 modified (cos-docs) | 3 cos-docs (e2e291f, 879f6fc, 18c6973) |
 | 04-01 | 260 | 3 | 4 created (cos-docs: Dockerfile, deploy/nginx.conf, .dockerignore, .gitignore) | 3 cos-docs (9f274b1, 1efc7ad, 0cef9d6) |
 | 04-02 | 480 | 5 | 5 created (cos-docs kubernetes branch: k8s/namespace.yaml, k8s/deployment.yaml, k8s/service.yaml, k8s/kustomization.yaml, k8s/README.md) + 1 modified (04-02-PLAN.md on main) | 1 main (6875e05 port retarget) + 1 kubernetes (1646909 Kustomize bundle) |
+| 04-03 | ~2700 | 3 | 3 created (scripts/emit-site-manifest.sh, scripts/install-runner.sh, .planning/phases/04-deploy-ci/RUNNER-SETUP.md) | 3 main (acc1d7b, 040926e, 3c9daa9) + host-side systemd install |
 
 ## Accumulated Context
 
@@ -129,6 +130,14 @@ Plan: 2 of 5 complete
 - Smoke-test wrapper pattern: `set +e; trap restore EXIT` around build-all-api.sh --keep / mkdocs build / docker build, plus an early --restore before docker build. Guarantees sibling repos revert even on mid-pipeline abort. Same pattern recommended for Plan 04-04 CI workflow (keeps the on-disk workspace clean for the next run).
 - Build-context bound verified empirically: docker build transferred 31.48MB (vs. multi-GB if `/home/btc/github/` leaked in). `.dockerignore` is the only structural gate — it must not regress.
 
+### Decisions From Plan 04-03
+
+- gh auth scope requirement relaxed from `admin:repo_hook` → `repo` (in-flight Rule-2 fix, commit `3c9daa9`). GitHub's runner-registration-token API requires only `repo`; `admin:repo_hook` governs webhook admin and was an over-strict inheritance from the 04-CONTEXT user_setup block. Standard `gh auth login` default scopes (`repo,workflow,gist,read:org`) now satisfy install-runner.sh preflight — no `gh auth refresh` round trip needed.
+- Runner registered as `talos-cos-docs` with labels `self-hosted,cos-docs,talos` on 10.70.0.102 as user `btc`; systemd unit `actions.runner.dan-xuereb-cos-docs.talos-cos-docs.service` active. Runner version 2.333.1.
+- Runner work-dir isolation confirmed: `/home/btc/actions-runner/_work/` distinct from `/home/btc/github/cos-docs/` — CI will not pollute the docs source tree.
+- CI-01/02/03 remain Pending in REQUIREMENTS.md despite 04-03 completion. This plan delivers infra only; satisfaction requires the Plan 04-04 workflow (nightly/push/dispatch triggers) and Plan 04-05 E2E registry push verification.
+- `emit-site-manifest.sh` discovers 31 sibling repos in `/home/btc/github/` (exceeds the plan's >=25 threshold), excludes cos-docs, emits 40-hex `cos_docs_sha` + ISO-8601 `generated_at` + jq-built `repos` map.
+
 ### Decisions From Plan 04-02
 
 - NodePort retarget cascade: 30081 (held by pricefeed) → 30082 (held by xuer-operator) → **30083 (free, verified via live-cluster enumeration)**. Governance artifacts (REQUIREMENTS DEPLOY-02/DEPLOY-04, ROADMAP, 04-CONTEXT.md) updated pre-executor in commit fbc65b7; plan-only retarget in 6875e05.
@@ -145,6 +154,7 @@ Plan: 2 of 5 complete
 - **DEPLOY-01**: RESOLVED by 04-01 (9f274b1 + 1efc7ad + 0cef9d6) — Dockerfile + nginx.conf + .dockerignore shipped with 4/4 local curl smoke assertions green.
 - **DEPLOY-02 / DEPLOY-03**: RESOLVED by 04-02 (1646909 on `kubernetes` branch) — Kustomize bundle rendered and server-side dry-run PASSED; NodePort 30083 locked.
 - **DEPLOY-04 (partial)**: artifacts ready; actual `kubectl apply -k` + reachability curl deferred to 04-05.
+- **CI-01 / CI-02 / CI-03 (partial — infra only)**: self-hosted runner live + `emit-site-manifest.sh` shipped (04-03, commits `acc1d7b`, `040926e`, `3c9daa9`). Workflow authoring deferred to 04-04; registry-push verification deferred to 04-05. Requirements remain Pending in REQUIREMENTS.md.
 
 ### Todos
 
@@ -156,8 +166,8 @@ Plan: 2 of 5 complete
 
 ## Session Continuity
 
-**Last session:** 2026-04-20T12:56:58Z
-**Next action:** Phase 4 plan 04-02 complete (kubernetes branch + Kustomize bundle @ 1646909; main @ 6875e05 for NodePort 30083 retarget). Next up: 04-03 (CI workflow: build image in GitHub Actions, push to 10.70.0.30:5000/cos-docs:<tag>, optional rollout-restart trigger). No blockers.
+**Last session:** 2026-04-20T14:50:00Z
+**Next action:** Phase 4 plan 04-03 complete (self-hosted runner live on 10.70.0.102 + emit-site-manifest.sh + install-runner.sh + RUNNER-SETUP.md on main @ acc1d7b, 040926e, 3c9daa9). Next up: 04-04 (`.github/workflows/build.yml`: nightly + push + dispatch, in-place git sync, build-all-api --keep, strict-fail + allow_partial, if:always() restore, multi-tag push, rollout hint). No blockers.
 **Files in play:**
 
 - `.planning/PROJECT.md`
