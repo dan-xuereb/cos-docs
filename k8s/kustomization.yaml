@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: cos-docs
+
+resources:
+  - namespace.yaml
+  - deployment.yaml
+  - service.yaml
+
+commonLabels:
+  app.kubernetes.io/part-of: xuer-capital-docs
+
+images:
+  - name: 10.70.0.30:5000/cos-docs
+    newTag: latest       # operator edits this for SHA-pinned deploys

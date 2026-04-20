@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cos-docs
+  labels:
+    name: cos-docs
+    app.kubernetes.io/name: cos-docs
+    app.kubernetes.io/part-of: xuer-capital-docs

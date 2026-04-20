@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: cos-docs
+  namespace: cos-docs
+  labels:
+    app: cos-docs
+spec:
+  selector:
+    app: cos-docs
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+      nodePort: 30083
+  type: NodePort
