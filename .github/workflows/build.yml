@@ -1,0 +1,153 @@
+name: Build and push docs image
+
+# Phase 4 Plan 04-04 — CI pipeline for cos-docs aggregator.
+#
+# Runs on the self-hosted runner `talos-cos-docs` (labels: self-hosted,cos-docs,talos)
+# registered at github.com/dan-xuereb/cos-docs. The runner's work directory
+# (/home/btc/actions-runner/_work/) is NOT the cos-docs repo — we sync the
+# real workspace at /home/btc/github/cos-docs/ in place (RESEARCH §3 + Pitfall 1).
+#
+# Triggers (CI-01, CI-02):
+#   - schedule: nightly at 07:00 UTC (D-11)
+#   - push to main
+#   - workflow_dispatch with optional allow_partial boolean input
+#
+# Produces (CI-03):
+#   - 10.70.0.30:5000/cos-docs:<short-sha>
+#   - 10.70.0.30:5000/cos-docs:latest       (every green build, D-09)
+#   - 10.70.0.30:5000/cos-docs:nightly-YYYYMMDD  (schedule runs only, D-03)
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '0 7 * * *'
+  workflow_dispatch:
+    inputs:
+      allow_partial:
+        description: 'Allow build to succeed with partial sibling failures'
+        type: boolean
+        default: false
+
+# Serialize nightly + manual + push runs — they all mutate sibling docs/api.md
+# via the build-all-api.sh swap/restore dance (T-04-04-02).
+concurrency:
+  group: cos-docs-build
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: self-hosted
+    timeout-minutes: 45
+    defaults:
+      run:
+        shell: bash
+        working-directory: /home/btc/github/cos-docs
+
+    steps:
+      # ------------------------------------------------------------------
+      # 1. In-place sync of cos-docs (NO checkout action — RESEARCH §3)
+      # ------------------------------------------------------------------
+      - name: Sync cos-docs to target ref
+        run: |
+          git fetch origin
+          git reset --hard "${GITHUB_SHA}"
+          git clean -fdx -e site/ -e .venv-docs/ -e .venv-aggr/
+
+      # ------------------------------------------------------------------
+      # 2. Pull sibling repos (continue-on-failure) + emit site-manifest.json
+      # ------------------------------------------------------------------
+      - name: Pull sibling repos and emit manifest
+        run: |
+          set +e
+          for dir in /home/btc/github/*/; do
+            name=$(basename "$dir")
+            [ "$name" = "cos-docs" ] && continue
+            [ -d "$dir/.git" ] || continue
+            echo "=== $name ==="
+            git -C "$dir" pull --ff-only || echo "WARN: pull failed for $name"
+          done
+          set -e
+          scripts/emit-site-manifest.sh > site-manifest.json
+          jq -e '.repos | length >= 25' site-manifest.json
+
+      # ------------------------------------------------------------------
+      # 3. Per-repo API pre-render (swap real docs/api.md in each sibling)
+      # ------------------------------------------------------------------
+      - name: Build per-repo API pages
+        run: scripts/build-all-api.sh --keep
+
+      # ------------------------------------------------------------------
+      # 4. Aggregator site build (+ embed site-manifest.json into site/)
+      # ------------------------------------------------------------------
+      - name: Build aggregator site
+        run: |
+          python3 -m venv .venv-aggr
+          .venv-aggr/bin/pip install --quiet -r requirements-docs.txt
+          .venv-aggr/bin/mkdocs build --strict
+          mv site-manifest.json site/site-manifest.json
+
+      # ------------------------------------------------------------------
+      # 5. Strict-fail gate (D-04)
+      #    - schedule + push: always strict
+      #    - workflow_dispatch: allow_partial=true may override
+      # ------------------------------------------------------------------
+      - name: Enforce strict-fail policy
+        env:
+          ALLOW_PARTIAL: ${{ inputs.allow_partial }}
+        run: |
+          if [ "${{ github.event_name }}" != "workflow_dispatch" ]; then
+            ALLOW_PARTIAL=false
+          fi
+          if grep -q "FAIL" .build-all-api-status.md; then
+            echo "::warning::Partial sibling failures detected"
+            cat .build-all-api-status.md
+            if [ "$ALLOW_PARTIAL" != "true" ]; then
+              echo "::error::Strict-fail: partial failure not permitted for ${{ github.event_name }}"
+              exit 1
+            fi
+          fi
+
+      # ------------------------------------------------------------------
+      # 6. Restore sibling docs/api.md (ALWAYS — T-04-04-01)
+      # ------------------------------------------------------------------
+      - name: Restore per-repo docs/api.md
+        if: always()
+        run: scripts/build-all-api.sh --restore
+
+      # ------------------------------------------------------------------
+      # 7. Upload diagnostic status on failure
+      # ------------------------------------------------------------------
+      - name: Upload build-all-api-status on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-all-api-status
+          path: /home/btc/github/cos-docs/.build-all-api-status.md
+          if-no-files-found: ignore
+
+      # ------------------------------------------------------------------
+      # 8. Docker build + multi-tag push (D-03, D-09)
+      # ------------------------------------------------------------------
+      - name: Build and push image
+        run: |
+          SHORT_SHA="${GITHUB_SHA::7}"
+          SHA_TAG="10.70.0.30:5000/cos-docs:${SHORT_SHA}"
+          LATEST_TAG="10.70.0.30:5000/cos-docs:latest"
+          docker build -t "$SHA_TAG" -t "$LATEST_TAG" .
+          docker push "$SHA_TAG"
+          docker push "$LATEST_TAG"
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            NIGHTLY_TAG="10.70.0.30:5000/cos-docs:nightly-$(date -u +%Y%m%d)"
+            docker tag "$SHA_TAG" "$NIGHTLY_TAG"
+            docker push "$NIGHTLY_TAG"
+            echo "::notice::Nightly tag pushed: $NIGHTLY_TAG"
+          fi
+          echo "::notice::Image pushed: $SHA_TAG + $LATEST_TAG"
+
+      # ------------------------------------------------------------------
+      # 9. Deploy hint (D-06)
+      # ------------------------------------------------------------------
+      - name: Deploy hint
+        run: |
+          echo "→ deploy with: kubectl rollout restart deployment/cos-docs -n cos-docs"
