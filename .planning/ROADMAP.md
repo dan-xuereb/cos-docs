@@ -74,7 +74,7 @@ Plans:
 - [x] 04-01-PLAN.md — Multi-stage Dockerfile + nginx.conf + .dockerignore; local smoke-test image serves pre-built site/ (DEPLOY-01, DEPLOY-04) ✓ 2026-04-20 (9f274b1, 1efc7ad, 0cef9d6)
 - [x] 04-02-PLAN.md — `kubernetes` branch (from main) + Kustomize bundle: namespace/deployment/service/kustomization, NodePort 30083, control-plane toleration, 1 replica (DEPLOY-02, DEPLOY-03, DEPLOY-04) ✓ 2026-04-20 (1646909 on kubernetes branch; 6875e05 port retarget on main)
 - [x] 04-03-PLAN.md — Self-hosted runner install script (scripted `gh api`) + emit-site-manifest.sh + RUNNER-SETUP runbook (CI-01, CI-02, CI-03 partial — infra only; workflow in 04-04, E2E in 04-05) ✓ 2026-04-20 (acc1d7b, 040926e, 3c9daa9)
-- [ ] 04-04-PLAN.md — `.github/workflows/build.yml`: nightly + push + dispatch, in-place git sync (no actions/checkout), build-all-api --keep, strict-fail gate + allow_partial, if:always() restore, multi-tag push, rollout hint (CI-01, CI-02, CI-03, DEPLOY-01)
+- [x] 04-04-PLAN.md — `.github/workflows/build.yml`: nightly + push + dispatch, in-place git sync (no actions/checkout), build-all-api --keep, strict-fail gate + allow_partial, if:always() restore, multi-tag push, rollout hint (CI-01, CI-02, CI-03, DEPLOY-01) ✓ 2026-04-20 (cab97f6 + 4934189; dispatch run 24673734857 green in 1m44s, registry :4934189 + :latest)
 - [ ] 04-05-PLAN.md — End-to-end deploy verification: kubectl apply -k, curl assertions at 10.70.0.102:30083, DEPLOY-VERIFICATION.md transcript (DEPLOY-02, DEPLOY-03, DEPLOY-04)
 
 ## Progress
@@ -84,7 +84,7 @@ Plans:
 | 1. Scaffold & Template | 2/2 | Complete | 2026-04-18 |
 | 2. Content Migration | 2/3 | In progress | - |
 | 3. Aggregator & API Strategy | 3/3 | Complete | 2026-04-20 |
-| 4. Deploy & CI | 3/5 | In progress | - |
+| 4. Deploy & CI | 4/5 | In progress | - |
 
 ## Coverage
 

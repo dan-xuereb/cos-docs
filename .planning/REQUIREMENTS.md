@@ -48,9 +48,9 @@
 
 ### CI
 
-- [ ] **CI-01**: A GitHub Actions workflow in `cos-docs/` rebuilds the aggregator nightly
-- [ ] **CI-02**: The same workflow rebuilds on push to `main` and supports `workflow_dispatch`
-- [ ] **CI-03**: A successful CI run pushes the built image to the private registry (or produces a deployable artifact)
+- [x] **CI-01**: A GitHub Actions workflow in `cos-docs/` rebuilds the aggregator nightly (04-04; `.github/workflows/build.yml` declares `schedule: [{cron: '0 7 * * *'}]`, visible in `gh workflow list`)
+- [x] **CI-02**: The same workflow rebuilds on push to `main` and supports `workflow_dispatch` (04-04; `push: { branches: [main] }` + `workflow_dispatch` with `allow_partial` boolean input; dispatch run 24673734857 exercised live)
+- [x] **CI-03**: A successful CI run pushes the built image to the private registry (or produces a deployable artifact) (04-04; green run 24673734857 pushed `10.70.0.30:5000/cos-docs:4934189` + `:latest` — registry tags list confirmed)
 
 ## v2 Requirements
 
@@ -103,9 +103,9 @@
 | DEPLOY-02 | Phase 4 | Complete (04-02) |
 | DEPLOY-03 | Phase 4 | Complete (04-02) |
 | DEPLOY-04 | Phase 4 | Pending |
-| CI-01 | Phase 4 | Pending |
-| CI-02 | Phase 4 | Pending |
-| CI-03 | Phase 4 | Pending |
+| CI-01 | Phase 4 | Complete (04-04) |
+| CI-02 | Phase 4 | Complete (04-04) |
+| CI-03 | Phase 4 | Complete (04-04) |
 
 **Coverage:**
 - v1 requirements: 26 total (recount during roadmap creation; original summary said 23)
