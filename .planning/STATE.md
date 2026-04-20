@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-04-20T05:29:00.000Z"
+last_updated: "2026-04-20T05:36:00.000Z"
 progress:
   total_phases: 4
   completed_phases: 2
   total_plans: 8
-  completed_plans: 6
-  percent: 75
+  completed_plans: 7
+  percent: 88
 ---
 
 # State: cos-docs
@@ -25,12 +25,12 @@ progress:
 ## Current Position
 
 Phase: 3 (Aggregator & API Strategy) — IN PROGRESS
-Plan: 1 of 3 — complete
+Plan: 2 of 3 — complete
 
-- **Phase:** 3 — Aggregator & API Strategy (Wave 1 of 3 complete)
-- **Plan:** 03-01 (d8b9027 + eb1611d in cos-docs + 4 sibling-repo scaffold cherry-picks) complete; ready for 03-02 (API pre-render build-all-api.sh + per-repo .venv-docs)
-- **Status:** Ready to execute 03-02
-- **Progress:** [■■■□] 2/4 phases complete + 1/3 plans of phase 3; strict-build green on 29-repo aggregator
+- **Phase:** 3 — Aggregator & API Strategy (Wave 2 of 3 complete)
+- **Plan:** 03-02 (5e174d1 + 2a6c285 + d519714 in cos-docs) complete; ready for 03-03 (workspace Mermaid + top-level index.md / architecture.md)
+- **Status:** Ready to execute 03-03
+- **Progress:** [■■■□] 2/4 phases complete + 2/3 plans of phase 3; build-all-api.sh 20/20 OK; aggregator strict build exits 0 with pre-rendered API pages for all 20 Python repos
 
 ## Performance Metrics
 
@@ -47,6 +47,7 @@ Plan: 1 of 3 — complete
 | 02-01 | 276 | 2 | 2 | 2 (63b2246, 78c5101) |
 | 02-02 | 440 | 2 | 3 (cos-docs) + 1 (parent) + 9 (siblings) | 11 (d8cffe6, 83683eb, 4557877, c1b7072, 2835ccf, d6c8a03, a3d8591, 3b66154, 8a28715, 1a8d963, 7e6e2fc) |
 | 03-01 | 178 | 3 | 3 (cos-docs) | 2 cos-docs (d8b9027, eb1611d) + 4 siblings (5da13fe, a62d33f, 06defae, f4a0b51) |
+| 03-02 | 284 | 4 | 3 (cos-docs) + 2 (siblings, uncommitted per plan) | 3 cos-docs (5e174d1, 2a6c285, d519714) |
 
 ## Accumulated Context
 
@@ -102,9 +103,16 @@ Plan: 1 of 3 — complete
 - Comment hygiene rule: comment prose in aggregator config files must avoid naming excluded packages literally (prose like "API-rendering deps" keeps `! grep -q mkdocstrings` gates green without semantic loss)
 - Cherry-pick-with-dirty-tree precedent: `git stash push -u` + cherry-pick + `git stash pop` is safe when scaffold has zero file-path overlap with WIP; used for quant-dashboard kubernetes branch
 
+### Decisions From Plan 03-02
+
+- API-02 + API-03 closed: build-all-api.sh pre-renders all 20 Python sibling repos via isolated `uv venv .venv-docs`; aggregator consumes Material HTML via `<div class="cos-docs-prerendered-api" markdown="0">` passthrough (md_in_html). Mega-venv formally rejected; PROJECT.md "Defer API-docs strategy" Pending row resolved with evidence citation (xuer-sgl / cos-sdl workspace-dep evidence from 02-02-SUMMARY.md).
+- BTC-Forge + COS-MSE docstring hygiene fixes landed uncommitted on their `main` branches per plan Task 0 Step B directive (sibling-repo commits are user/automation territory, same as Phase 2 rollout pattern).
+- NO_DEPS_INSTALL map remains at 2 entries (COS-CIE, cos-signal-bridge) — no new empirical additions surfaced during Task 2.
+- md_in_html strips `markdown="0"` at render time but preserves the enclosing `<div class="cos-docs-prerendered-api" markdown="0">` tag verbatim — the class attribute is the durable passthrough proof (verified 20/20 in final aggregator `site/`).
+
 ### Open Decisions
 
-- **API-02**: RESOLVED by 03-01 pin matrix + 03-02 pre-render design — Phase 3 Plan 01 cemented "per-repo .venv-docs pre-render" over "mega-venv"; closure happens when 03-02 ships build-all-api.sh
+- **API-02**: RESOLVED by 03-02 (commit d519714 in cos-docs) — PROJECT.md Key Decision row "API-docs Strategy" added with full evidence trail.
 
 ### Todos
 
@@ -116,8 +124,8 @@ Plan: 1 of 3 — complete
 
 ## Session Continuity
 
-**Last session:** 2026-04-20T05:29:00.000Z
-**Next action:** Execute Plan 03-02 (API pre-render: `scripts/build-all-api.sh` + per-repo `.venv-docs` provisioning + pre-rendered HTML passthrough) — the API-rendering strategy cemented by 03-01 now needs its implementation counterpart. Aggregator strict-build stays green throughout 03-02 (it already passes with literal `::: <module>` directives as markdown text).
+**Last session:** 2026-04-20T05:36:00.000Z
+**Next action:** Execute Plan 03-03 (workspace Mermaid data-flow diagram + top-level docs/index.md repo-index table + docs/architecture.md narrative) — the final Wave of Phase 3. build-all-api.sh is proven 20/20 OK and the aggregator strict-build exits 0 with real API pages. 03-03 adds the workspace-overview layer (AGGR-03, DIAG-03) on top of the now-populated nav.
 **Files in play:**
 
 - `.planning/PROJECT.md`
