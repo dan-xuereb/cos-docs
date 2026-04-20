@@ -1,0 +1,11 @@
+# cos-docs aggregator pins. DELIBERATELY omits the API-rendering deps
+# (those run ONLY in per-repo .venv-docs via scripts/build-all-api.sh
+# added in Plan 03-02). Upstream mkdocs-monorepo-plugin issue #73:
+# child `plugins:` blocks are NOT executed by parent build, so loading
+# the API renderer into the aggregator venv is pointless and would
+# require mega-venv of all 20 Python repos (rejected per D-01, evidence
+# in 02-02-SUMMARY.md). See 03-PATTERNS.md for full rationale.
+mkdocs==1.6.1
+mkdocs-material==9.7.6
+mkdocs-monorepo-plugin==1.1.2
+pymdown-extensions>=10.9
