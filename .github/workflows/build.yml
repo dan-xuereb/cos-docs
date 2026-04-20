@@ -78,14 +78,15 @@ jobs:
         run: scripts/build-all-api.sh --keep
 
       # ------------------------------------------------------------------
-      # 4. Aggregator site build (+ embed site-manifest.json into site/)
+      # 4. Aggregator site build
+      #    site-manifest.json stays at repo root; Dockerfile COPYs it into
+      #    /usr/share/nginx/html/ alongside site/, served as /site-manifest.json.
       # ------------------------------------------------------------------
       - name: Build aggregator site
         run: |
           python3 -m venv .venv-aggr
           .venv-aggr/bin/pip install --quiet -r requirements-docs.txt
           .venv-aggr/bin/mkdocs build --strict
-          mv site-manifest.json site/site-manifest.json
 
       # ------------------------------------------------------------------
       # 5. Strict-fail gate (D-04)
