@@ -69,7 +69,13 @@ Plans:
   2. `kubectl apply -k cos-docs/k8s/` deploys the site to the Talos cluster with a `control-plane` taint toleration, pulling from the private registry `10.70.0.30:5000`
   3. `curl http://10.70.0.102:30081/` returns the rendered aggregator landing page with HTTP 200
   4. A GitHub Actions workflow runs on nightly schedule, on push to `main`, and on `workflow_dispatch`, and produces a deployable image (or pushes to the private registry)
-**Plans:** 3 plans
+**Plans:** 5 plans
+Plans:
+- [ ] 04-01-PLAN.md — Multi-stage Dockerfile + nginx.conf + .dockerignore; local smoke-test image serves pre-built site/ (DEPLOY-01, DEPLOY-04)
+- [ ] 04-02-PLAN.md — `kubernetes` branch (from main) + Kustomize bundle: namespace/deployment/service/kustomization, NodePort 30081, control-plane toleration, 1 replica (DEPLOY-02, DEPLOY-03, DEPLOY-04)
+- [ ] 04-03-PLAN.md — Self-hosted runner install script (scripted `gh api`) + emit-site-manifest.sh + RUNNER-SETUP runbook (CI-01, CI-02, CI-03)
+- [ ] 04-04-PLAN.md — `.github/workflows/build.yml`: nightly + push + dispatch, in-place git sync (no actions/checkout), build-all-api --keep, strict-fail gate + allow_partial, if:always() restore, multi-tag push, rollout hint (CI-01, CI-02, CI-03, DEPLOY-01)
+- [ ] 04-05-PLAN.md — End-to-end deploy verification: kubectl apply -k, curl assertions at 10.70.0.102:30081, DEPLOY-VERIFICATION.md transcript (DEPLOY-02, DEPLOY-03, DEPLOY-04)
 
 ## Progress
 
@@ -78,7 +84,7 @@ Plans:
 | 1. Scaffold & Template | 2/2 | Complete | 2026-04-18 |
 | 2. Content Migration | 2/3 | In progress | - |
 | 3. Aggregator & API Strategy | 3/3 | Complete | 2026-04-20 |
-| 4. Deploy & CI | 0/0 | Not started | - |
+| 4. Deploy & CI | 0/5 | Planned | - |
 
 ## Coverage
 
